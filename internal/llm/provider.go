@@ -14,8 +14,16 @@ type Provider interface {
 
 // NewProvider returns a Provider based on configuration.
 func NewProvider(cfg config.Config) Provider {
-    // For now only Gemini is implemented.
-    return NewGeminiClient(cfg)
+    switch cfg.Provider {
+    case "openai":
+        return NewOpenAIClient(cfg)
+    case "anthropic":
+        return NewAnthropicClient(cfg)
+    case "gemini-cli":
+        return NewExternalGeminiClient(cfg)
+    default:
+        return NewGeminiClient(cfg)
+    }
 }
 
 

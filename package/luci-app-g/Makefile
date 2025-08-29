@@ -8,6 +8,7 @@ LUCI_TITLE:=g - Natural Language CLI for OpenWrt (Web UI)
 LUCI_PKGARCH:=all
 LUCI_DEPENDS:=+luci-base +luci-compat +g
 LUCI_MAINTAINER:=aezizhu
+LUCI_DESCRIPTION:=LuCI UI for g, the secure natural-language CLI for OpenWrt.
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

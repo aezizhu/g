@@ -24,6 +24,12 @@ type Config struct {
     Denylist       []string `json:"denylist"`
     LogFile        string   `json:"log_file"`
     ElevateCommand string   `json:"elevate_command"`
+    // Optional external providers/API keys
+    OpenAIAPIKey   string   `json:"openai_api_key"`
+    AnthropicAPIKey string  `json:"anthropic_api_key"`
+    ExternalGeminiPath string `json:"external_gemini_path"`
+    GoogleOAuthClientID string `json:"google_oauth_client_id"`
+    GoogleOAuthClientSecret string `json:"google_oauth_client_secret"`
 }
 
 func defaultConfig() Config {
@@ -59,6 +65,9 @@ func defaultConfig() Config {
         },
         LogFile: "/tmp/g.log",
         ElevateCommand: "",
+        OpenAIAPIKey: "",
+        AnthropicAPIKey: "",
+        ExternalGeminiPath: "/usr/bin/gemini",
     }
 }
 
@@ -118,6 +127,15 @@ func Load(path string) (Config, error) {
     }
     if v := strings.TrimSpace(os.Getenv("G_PROVIDER")); v != "" {
         cfg.Provider = v
+    }
+    if v := strings.TrimSpace(os.Getenv("OPENAI_API_KEY")); v != "" {
+        cfg.OpenAIAPIKey = v
+    }
+    if v := strings.TrimSpace(os.Getenv("ANTHROPIC_API_KEY")); v != "" {
+        cfg.AnthropicAPIKey = v
+    }
+    if v := strings.TrimSpace(os.Getenv("G_EXTERNAL_GEMINI")); v != "" {
+        cfg.ExternalGeminiPath = v
     }
 
     if cfg.APIKey == "" {

@@ -8,6 +8,7 @@ Author: aezizhu
   <a href="#"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <a href="#"><img alt="Go Version" src="https://img.shields.io/badge/Go-1.21+-1f425f"></a>
   <a href="#"><img alt="OpenWrt" src="https://img.shields.io/badge/OpenWrt-supported-00a0e9"></a>
+  <a href="https://github.com/aezizhu/g/actions/workflows/build.yml"><img alt="CI" src="https://github.com/aezizhu/g/actions/workflows/build.yml/badge.svg"></a>
 </p>
 
 Overview

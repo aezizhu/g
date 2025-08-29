@@ -9,7 +9,7 @@ Targets
 Cross-compile for the router's architecture (e.g., mips, mipsel, arm, aarch64):
 
 ```bash
-GOOS=linux GOARCH=mipsle go build -trimpath -ldflags "-s -w" ./cmd/g
+go run ./scripts/build-openwrt.sh
 ```
 
 UCI Configuration
@@ -34,5 +34,29 @@ Deployment
 ----------
 
 Copy the `g` binary to `/usr/bin/g` and ensure it is executable.
+
+Feed Setup (optional)
+---------------------
+
+Use this repository as an OpenWrt feed:
+
+```bash
+# in your OpenWrt buildroot
+echo "src-git g https://github.com/aezizhu/g.git;main" >> feeds.conf
+./scripts/feeds update g
+./scripts/feeds install -a -p g
+make package/g/compile V=s
+make package/luci-app-g/compile V=s
+```
+
+Prebuilt Releases
+-----------------
+
+Download `.ipk` from the Releases page and install:
+
+```bash
+opkg install g_*.ipk
+opkg install luci-app-g_*.ipk
+```
 
 
