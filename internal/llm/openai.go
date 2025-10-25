@@ -23,9 +23,14 @@ func NewOpenAIClient(cfg config.Config) *OpenAIClient {
     return &OpenAIClient{httpClient: &http.Client{Timeout: 30 * time.Second}, cfg: cfg}
 }
 
+type openaiMessage struct {
+    Role    string `json:"role"`
+    Content string `json:"content"`
+}
+
 type openaiReq struct {
-    Model string `json:"model"`
-    Messages []struct{ Role, Content string `json:"role","content"` } `json:"messages"`
+    Model          string            `json:"model"`
+    Messages       []openaiMessage   `json:"messages"`
     ResponseFormat map[string]string `json:"response_format,omitempty"`
 }
 
@@ -43,7 +48,7 @@ func (c *OpenAIClient) GeneratePlan(ctx context.Context, prompt string) (plan.Pl
         model = "gpt-4o-mini"
     }
     body := openaiReq{Model: model}
-    body.Messages = []struct{ Role, Content string `json:"role","content"` }{{Role: "user", Content: prompt}}
+    body.Messages = []openaiMessage{{Role: "user", Content: prompt}}
     body.ResponseFormat = map[string]string{"type": "json_object"}
     b, _ := json.Marshal(body)
     req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "https://api.openai.com/v1/chat/completions", bytes.NewReader(b))

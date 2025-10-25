@@ -23,10 +23,15 @@ func NewAnthropicClient(cfg config.Config) *AnthropicClient {
     return &AnthropicClient{httpClient: &http.Client{Timeout: 30 * time.Second}, cfg: cfg}
 }
 
+type anthropicMessage struct {
+    Role    string `json:"role"`
+    Content string `json:"content"`
+}
+
 type anthropicReq struct {
-    Model string `json:"model"`
-    Messages []struct{ Role, Content string `json:"role","content"` } `json:"messages"`
-    MaxTokens int `json:"max_tokens"`
+    Model     string              `json:"model"`
+    Messages  []anthropicMessage  `json:"messages"`
+    MaxTokens int                 `json:"max_tokens"`
 }
 
 type anthropicResp struct { Content []struct{ Text string `json:"text"` } `json:"content"` }
@@ -41,7 +46,7 @@ func (c *AnthropicClient) GeneratePlan(ctx context.Context, prompt string) (plan
         model = "claude-3-5-sonnet-20240620"
     }
     body := anthropicReq{Model: model, MaxTokens: 2048}
-    body.Messages = []struct{ Role, Content string `json:"role","content"` }{{Role: "user", Content: prompt}}
+    body.Messages = []anthropicMessage{{Role: "user", Content: prompt}}
     b, _ := json.Marshal(body)
     req, _ := http.NewRequestWithContext(ctx, http.MethodPost, "https://api.anthropic.com/v1/messages", bytes.NewReader(b))
     req.Header.Set("Content-Type", "application/json")
