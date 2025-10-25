@@ -10,10 +10,10 @@ import (
     "strings"
     "time"
 
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
-// Plugin represents a plugin that can extend g's functionality
+// Plugin represents a plugin that can extend LuciCodex functionality
 type Plugin interface {
     Name() string
     Description() string

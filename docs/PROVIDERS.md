@@ -1,18 +1,18 @@
 Providers and Authentication
 ===========================
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Overview
 --------
 
-`g` supports multiple providers for planning: Gemini (API), Gemini CLI (external), OpenAI, and Anthropic.
+`LuciCodex` supports multiple providers for planning: Gemini (API), Gemini CLI (external), OpenAI, and Anthropic.
 
 Selection
 ---------
 
 - CLI flag: `-provider gemini|gemini-cli|openai|anthropic`
-- Env: `G_PROVIDER`
+- Env: `LUCICODEX_PROVIDER` (legacy `G_PROVIDER` still read)
 
 Gemini (API)
 ------------
@@ -23,8 +23,8 @@ Gemini CLI (External)
 ---------------------
 
 - Install `@google/gemini-cli` or another CLI that prints text.
-- Configure path via `G_EXTERNAL_GEMINI` (default `/usr/bin/gemini`).
-- `g` invokes it and attempts to parse a JSON plan from stdout.
+- Configure path via `LUCICODEX_EXTERNAL_GEMINI` (legacy `G_EXTERNAL_GEMINI`) (default `/usr/bin/gemini`).
+- `lucicodex` invokes it and attempts to parse a JSON plan from stdout.
 - For login, use the CLI’s built-in OAuth or device code flow.
 
 OpenAI

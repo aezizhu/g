@@ -6,8 +6,8 @@ import (
     "io"
     "strings"
 
-    "github.com/aezizhu/g/internal/executor"
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/executor"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
 func PrintPlan(w io.Writer, p plan.Plan) {

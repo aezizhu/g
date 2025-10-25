@@ -9,14 +9,14 @@ import (
     "strings"
     "time"
 
-    "github.com/aezizhu/g/internal/config"
-    "github.com/aezizhu/g/internal/executor"
-    "github.com/aezizhu/g/internal/llm"
-    "github.com/aezizhu/g/internal/logging"
-    "github.com/aezizhu/g/internal/openwrt"
-    "github.com/aezizhu/g/internal/plan"
-    "github.com/aezizhu/g/internal/policy"
-    "github.com/aezizhu/g/internal/ui"
+    "github.com/aezizhu/LuciCodex/internal/config"
+    "github.com/aezizhu/LuciCodex/internal/executor"
+    "github.com/aezizhu/LuciCodex/internal/llm"
+    "github.com/aezizhu/LuciCodex/internal/logging"
+    "github.com/aezizhu/LuciCodex/internal/openwrt"
+    "github.com/aezizhu/LuciCodex/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/policy"
+    "github.com/aezizhu/LuciCodex/internal/ui"
 )
 
 type REPL struct {
@@ -44,11 +44,11 @@ func New(cfg config.Config) *REPL {
 func (r *REPL) Run(ctx context.Context, input io.Reader, output io.Writer) error {
     scanner := bufio.NewScanner(input)
     
-    fmt.Fprintf(output, "g interactive mode (provider: %s)\n", r.cfg.Provider)
+    fmt.Fprintf(output, "LuciCodex interactive mode (provider: %s)\n", r.cfg.Provider)
     fmt.Fprintf(output, "Type 'help' for commands, 'exit' to quit\n\n")
     
     for {
-        fmt.Fprint(output, "g> ")
+        fmt.Fprint(output, "lucicodex> ")
         
         if !scanner.Scan() {
             break

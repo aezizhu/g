@@ -68,7 +68,7 @@ function action_plan()
         local output_file = "/tmp/lucicodex-plan.json"
         local f = io.open(output_file, "r")
         if not f then
-            output_file = "/tmp/g-plan.json"
+            output_file = "/tmp/lucicodex-plan.json"
             f = io.open(output_file, "r")
         end
         if f then
@@ -211,9 +211,7 @@ function action_metrics()
     }
     
     local f = io.open("/tmp/lucicodex-metrics.json", "r")
-    if not f then
-        f = io.open("/tmp/g-metrics.json", "r")
-    end
+    -- no legacy fallback needed
     if f then
         local content = f:read("*all")
         f:close()

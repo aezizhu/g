@@ -1,13 +1,13 @@
 Usage Guide
 ===========
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Basics
 ------
 
 ```bash
-./g "restart wifi"
+lucicodex "restart wifi"
 ```
 
 This performs a dry run by default, showing a plan and commands.
@@ -16,7 +16,7 @@ Approving Execution
 -------------------
 
 ```bash
-./g -dry-run=false -approve "open port 22 for lan"
+lucicodex -dry-run=false -approve "open port 22 for lan"
 ```
 
 Flags
@@ -43,7 +43,7 @@ Interactive Mode
 Start an interactive session:
 
 ```bash
-./g -interactive
+lucicodex -interactive
 ```
 
 Commands in interactive mode:
@@ -61,7 +61,7 @@ Setup Wizard
 For first-time setup:
 
 ```bash
-./g -setup
+lucicodex -setup
 ```
 
 The wizard will guide you through provider selection, credential configuration, and security settings.

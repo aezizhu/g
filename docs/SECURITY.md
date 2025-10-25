@@ -1,7 +1,7 @@
 Security Model
 ==============
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Threat Model
 ------------

@@ -10,8 +10,8 @@ import (
     "syscall"
     "time"
 
-    "github.com/aezizhu/g/internal/config"
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/config"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
 type Result struct {

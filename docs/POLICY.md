@@ -1,7 +1,7 @@
 Policy Guide
 ============
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Overview
 --------

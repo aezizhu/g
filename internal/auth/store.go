@@ -32,9 +32,9 @@ func NewStore(path string) *Store {
 func defaultPath() string {
     home, _ := os.UserHomeDir()
     if home != "" {
-        return filepath.Join(home, ".config", "g", "tokens.json")
+        return filepath.Join(home, ".config", "lucicodex", "tokens.json")
     }
-    return "/etc/g/tokens.json"
+    return "/etc/lucicodex/tokens.json"
 }
 
 func (s *Store) PathOrDefault() string {

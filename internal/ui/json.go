@@ -4,8 +4,8 @@ import (
     "encoding/json"
     "io"
 
-    "github.com/aezizhu/g/internal/executor"
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/executor"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
 func PrintPlanJSON(w io.Writer, p plan.Plan) error {

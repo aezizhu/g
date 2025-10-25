@@ -1,7 +1,7 @@
 Architecture
 ============
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Overview
 --------
@@ -11,7 +11,7 @@ The system converts natural language input into a structured command plan, valid
 Components
 ----------
 
-- CLI (`cmd/g`): Parses flags, loads config, orchestrates request/plan/execute.
+- CLI (`cmd/lucicodex`): Parses flags, loads config, orchestrates request/plan/execute.
 - Config (`internal/config`): Loads defaults, JSON file, UCI (OpenWrt), and env.
 - Planner (`internal/plan`): Defines the plan schema and instruction prefix.
 - LLM Client (`internal/llm`): Calls provider HTTP API (Gemini) and parses plan.
