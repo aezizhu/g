@@ -1,7 +1,7 @@
 OpenWrt Notes
 =============
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Targets
 -------
@@ -16,10 +16,10 @@ UCI Configuration
 -----------------
 
 ```bash
-uci set g.@api[0]=api
-uci set g.@api[0].key=YOUR_KEY
-uci set g.@api[0].model=gemini-1.5-flash
-uci commit g
+uci set lucicodex.@api[0]=api
+uci set lucicodex.@api[0].key=YOUR_KEY
+uci set lucicodex.@api[0].model=gemini-1.5-flash
+uci commit lucicodex
 ```
 
 Dependencies
@@ -33,7 +33,7 @@ Ensure the following tools are installed and in `PATH`:
 Deployment
 ----------
 
-Copy the `g` binary to `/usr/bin/g` and ensure it is executable.
+Copy the `lucicodex` binary to `/usr/bin/lucicodex` and ensure it is executable. A compatibility symlink to `/usr/bin/g` may also be created.
 
 Feed Setup (optional)
 ---------------------
@@ -42,11 +42,11 @@ Use this repository as an OpenWrt feed:
 
 ```bash
 # in your OpenWrt buildroot
-echo "src-git g https://github.com/aezizhu/g.git;main" >> feeds.conf
-./scripts/feeds update g
-./scripts/feeds install -a -p g
-make package/g/compile V=s
-make package/luci-app-g/compile V=s
+echo "src-git lucicodex https://github.com/aezizhu/LuciCodex.git;main" >> feeds.conf
+./scripts/feeds update lucicodex
+./scripts/feeds install -a -p lucicodex
+make package/lucicodex/compile V=s
+make package/luci-app-lucicodex/compile V=s
 ```
 
 Prebuilt Releases
@@ -55,8 +55,8 @@ Prebuilt Releases
 Download `.ipk` from the Releases page and install:
 
 ```bash
-opkg install g_*.ipk
-opkg install luci-app-g_*.ipk
+opkg install lucicodex_*.ipk
+opkg install luci-app-lucicodex_*.ipk
 ```
 
 

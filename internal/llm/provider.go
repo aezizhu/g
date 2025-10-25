@@ -3,8 +3,8 @@ package llm
 import (
     "context"
 
-    "github.com/aezizhu/g/internal/config"
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/config"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
 // Provider is the interface implemented by LLM clients that can produce plans.

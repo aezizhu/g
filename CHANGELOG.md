@@ -70,4 +70,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Non-root execution by default with explicit elevation
 - Audit trail with structured logging
 
-[0.1.0]: https://github.com/aezizhu/g/releases/tag/v0.1.0
+[0.1.0]: https://github.com/aezizhu/LuciCodex/releases/tag/v0.1.0

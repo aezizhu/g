@@ -1,6 +1,6 @@
-# Contributing to g
+# Contributing to LuciCodex
 
-Thank you for your interest in contributing to `g`! This document provides guidelines for contributing to the project.
+Thank you for your interest in contributing to `LuciCodex`! This document provides guidelines for contributing to the project.
 
 ## Development Setup
 
@@ -11,9 +11,9 @@ Thank you for your interest in contributing to `g`! This document provides guide
 
 2. **Clone and Build**
    ```bash
-   git clone https://github.com/aezizhu/g.git
-   cd g
-   go build ./cmd/g
+   git clone https://github.com/aezizhu/LuciCodex.git
+   cd LuciCodex
+   go build ./cmd/lucicodex
    ```
 
 3. **Run Tests**

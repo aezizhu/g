@@ -9,8 +9,8 @@ import (
     "syscall"
     "time"
 
-    "github.com/aezizhu/g/internal/config"
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/config"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
 // ResourceLimits defines execution constraints
@@ -39,7 +39,7 @@ func NewSandbox(cfg config.Config) *Sandbox {
             MaxFileSize:     10 * 1024 * 1024, // 10MB
             MaxProcesses:    10,
         },
-        tmpDir: "/tmp/g-sandbox",
+        tmpDir: "/tmp/lucicodex-sandbox",
     }
 }
 

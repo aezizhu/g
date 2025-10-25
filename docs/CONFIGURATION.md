@@ -1,14 +1,14 @@
 Configuration
 =============
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 Sources and Precedence
 ----------------------
 
 1. Defaults (compiled)
-2. JSON file: `/etc/g/config.json` or `$HOME/.config/g/config.json`
-3. OpenWrt UCI: `g.@api[0].*`
+2. JSON file: `/etc/lucicodex/config.json` or `$HOME/.config/lucicodex/config.json` (legacy paths under `g` are still read)
+3. OpenWrt UCI: `lucicodex.@api[0].*` (legacy `g.@api[0].*` still supported)
 4. Environment variables
 
 Environment Variables
@@ -37,7 +37,7 @@ Sample JSON
   "max_commands": 10,
   "allowlist": ["^uci(\\s|$)", "^ubus(\\s|$)"],
   "denylist": ["^rm -rf /"],
-  "log_file": "/tmp/g.log"
+  "log_file": "/tmp/lucicodex.log"
   ,"elevate_command": "doas -n"
 }
 ```
@@ -46,10 +46,10 @@ OpenWrt UCI
 -----------
 
 ```bash
-uci set g.@api[0]=api
-uci set g.@api[0].key=YOUR_KEY
-uci set g.@api[0].model=gemini-1.5-flash
-uci commit g
+uci set lucicodex.@api[0]=api
+uci set lucicodex.@api[0].key=YOUR_KEY
+uci set lucicodex.@api[0].model=gemini-1.5-flash
+uci commit lucicodex
 ```
 
 

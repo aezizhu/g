@@ -10,7 +10,7 @@ import (
     "strconv"
     "strings"
 
-    "github.com/aezizhu/g/internal/config"
+    "github.com/aezizhu/LuciCodex/internal/config"
 )
 
 type Wizard struct {
@@ -26,12 +26,12 @@ func New(reader io.Reader, writer io.Writer) *Wizard {
 }
 
 func (w *Wizard) Run() error {
-    fmt.Fprintf(w.writer, "g Setup Wizard\n")
+    fmt.Fprintf(w.writer, "LuciCodex Setup Wizard\n")
     fmt.Fprintf(w.writer, "===============\n\n")
-    fmt.Fprintf(w.writer, "This wizard will help you configure g for your OpenWrt router.\n\n")
+    fmt.Fprintf(w.writer, "This wizard will help you configure LuciCodex for your OpenWrt router.\n\n")
 
     cfg := config.Config{
-        Author:         "aezizhu",
+        Author:         "AZ <Aezi.zhu@icloud.com>",
         Endpoint:       "https://generativelanguage.googleapis.com/v1beta",
         Model:          "gemini-1.5-flash",
         Provider:       "gemini",
@@ -60,7 +60,7 @@ func (w *Wizard) Run() error {
             `^dd(\s|$)`,
             `^:(){:|:&};:`,
         },
-        LogFile:        "/tmp/g.log",
+        LogFile:        "/tmp/lucicodex.log",
         ElevateCommand: "",
     }
 
@@ -167,8 +167,8 @@ func (w *Wizard) saveConfig(cfg config.Config) error {
     fmt.Fprintf(w.writer, "Step 4: Save Configuration\n")
     
     paths := []string{
-        "/etc/g/config.json",
-        filepath.Join(os.Getenv("HOME"), ".config", "g", "config.json"),
+        "/etc/lucicodex/config.json",
+        filepath.Join(os.Getenv("HOME"), ".config", "lucicodex", "config.json"),
     }
     
     fmt.Fprintf(w.writer, "Choose configuration location:\n")
@@ -200,8 +200,8 @@ func (w *Wizard) saveConfig(cfg config.Config) error {
     
     fmt.Fprintf(w.writer, "✓ Configuration saved to %s\n\n", configPath)
     fmt.Fprintf(w.writer, "Setup complete! You can now run:\n")
-    fmt.Fprintf(w.writer, "  g \"restart wifi\"\n")
-    fmt.Fprintf(w.writer, "  g -interactive\n\n")
+    fmt.Fprintf(w.writer, "  lucicodex \"restart wifi\"\n")
+    fmt.Fprintf(w.writer, "  lucicodex -interactive\n\n")
     
     return nil
 }

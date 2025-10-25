@@ -2,14 +2,14 @@
 
 **Control your OpenWrt router with plain English commands**
 
-Author: aezizhu
+Author: AZ <Aezi.zhu@icloud.com>
 
 <p align="center">
   <a href="#"><img alt="Build" src="https://img.shields.io/badge/build-passing-brightgreen"></a>
   <a href="#license"><img alt="License" src="https://img.shields.io/badge/license-Dual-blue"></a>
   <a href="#"><img alt="Go Version" src="https://img.shields.io/badge/Go-1.21+-1f425f"></a>
   <a href="#"><img alt="OpenWrt" src="https://img.shields.io/badge/OpenWrt-supported-00a0e9"></a>
-  <a href="https://github.com/aezizhu/g/actions/workflows/build.yml"><img alt="CI" src="https://github.com/aezizhu/g/actions/workflows/build.yml/badge.svg"></a>
+  <a href="https://github.com/aezizhu/LuciCodex/actions/workflows/build.yml"><img alt="CI" src="https://github.com/aezizhu/LuciCodex/actions/workflows/build.yml/badge.svg"></a>
 </p>
 
 ---
@@ -26,12 +26,12 @@ Author: aezizhu
 
 ## Table of Contents
 
-- [Why Use LuCICodex?](#why-use-g)
+- [Why Use LuCICodex?](#why-use-lucicodex)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation on OpenWrt](#installation-on-openwrt)
   - [Getting Your API Key](#getting-your-api-key)
-- [Using LuCICodex on Your Router](#using-g-on-your-router)
+- [Using LuCICodex on Your Router](#using-lucicodex-on-your-router)
   - [Method 1: Web Interface (Recommended)](#method-1-web-interface-recommended)
   - [Method 2: Command Line (SSH)](#method-2-command-line-ssh)
 - [Configuration Guide](#configuration-guide)
@@ -67,7 +67,7 @@ Author: aezizhu
 
 ### Prerequisites
 
-Before installing g, you need:
+Before installing LuciCodex, you need:
 
 1. **An OpenWrt router** (version 21.02 or later recommended)
 2. **Internet connection** on your router
@@ -86,13 +86,13 @@ SSH into your router and download the LuCICodex package for your architecture:
 ```bash
 # For MIPS routers (most common)
 cd /tmp
-wget https://github.com/aezizhu/g/releases/latest/download/g-mips.ipk
+wget https://github.com/aezizhu/LuciCodex/releases/latest/download/lucicodex-mips.ipk
 
 # For ARM routers
-wget https://github.com/aezizhu/g/releases/latest/download/g-arm.ipk
+wget https://github.com/aezizhu/LuciCodex/releases/latest/download/lucicodex-arm.ipk
 
 # For x86_64 routers
-wget https://github.com/aezizhu/g/releases/latest/download/g-amd64.ipk
+wget https://github.com/aezizhu/LuciCodex/releases/latest/download/lucicodex-amd64.ipk
 ```
 
 #### Step 2: Install the Package
@@ -145,7 +145,7 @@ You should see: `LuCICodex version 0.3.0`
 
 ### Method 1: Web Interface (Recommended)
 
-This is the easiest way to use g, especially if you're not comfortable with command line.
+This is the easiest way to use LuciCodex, especially if you're not comfortable with command line.
 
 #### Step 1: Access the Web Interface
 
@@ -168,14 +168,14 @@ This is the easiest way to use g, especially if you're not comfortable with comm
    - "Restart the wifi"
    - "Open port 8080 for my web server"
 3. Click **Generate Plan**
-4. Review the commands that g suggests
+4. Review the commands that LuciCodex suggests
 5. If they look correct, click **Execute Commands**
 
 **That's it!** You're now using natural language to control your router.
 
 ### Method 2: Command Line (SSH)
 
-If you prefer using SSH or want to automate tasks, you can use g from the command line.
+If you prefer using SSH or want to automate tasks, you can use LuciCodex from the command line.
 
 #### Step 1: Configure Your API Key
 
@@ -192,7 +192,7 @@ uci commit lucicodex
 lucicodex "show me the wifi status"
 ```
 
-This will show you what commands g would run, but won't execute them yet.
+This will show you what commands LuciCodex would run, but won't execute them yet.
 
 #### Step 3: Execute Commands
 
@@ -476,7 +476,7 @@ Then clear your browser cache and reload.
 
 ### Interactive Mode (REPL)
 
-Start an interactive session where you can have a conversation with g:
+Start an interactive session where you can have a conversation with LuciCodex:
 
 ```bash
  lucicodex -interactive
@@ -495,7 +495,7 @@ Get structured output for scripting:
 Use a custom config file instead of UCI:
 
 ```bash
- lucicodex -config /etc/g/custom-config.json "your command"
+ lucicodex -config /etc/lucicodex/custom-config.json "your command"
 ```
 
 ### Environment Variables
@@ -550,7 +550,7 @@ Edit the allowlist and denylist in `/etc/config/lucicodex` or your config file:
 
 **Dual License:**
 
-- **Free for individual/personal use** - Use g on your home router at no cost
+- **Free for individual/personal use** - Use LuciCodex on your home router at no cost
 - **Commercial use requires a license** - Contact aezi.zhu@icloud.com for commercial licensing
 
 See [LICENSE](LICENSE) file for full details.
@@ -562,14 +562,14 @@ See [LICENSE](LICENSE) file for full details.
 ### Getting Help
 
 - **Documentation**: You're reading it!
-- **Issues**: https://github.com/aezizhu/g/issues
-- **Discussions**: https://github.com/aezizhu/g/discussions
+- **Issues**: https://github.com/aezizhu/LuciCodex/issues
+- **Discussions**: https://github.com/aezizhu/LuciCodex/discussions
 
 ### Commercial Support
 
 For commercial licensing, enterprise support, or custom development:
-- Email: aezi.zhu@icloud.com
-- Include "g Commercial License" in the subject line
+- Email: Aezi.zhu@icloud.com
+- Include "LuciCodex Commercial License" in the subject line
 
 ### Contributing
 
@@ -579,7 +579,7 @@ Contributions are welcome! Please read our contributing guidelines before submit
 
 ## About This Project
 
-**g** was created to make OpenWrt router administration accessible to everyone, not just networking experts. By combining the power of modern AI with strict safety controls, g lets you manage your router using natural language while maintaining security and transparency.
+**LuciCodex** was created to make OpenWrt router administration accessible to everyone, not just networking experts. By combining the power of modern AI with strict safety controls, LuciCodex lets you manage your router using natural language while maintaining security and transparency.
 
 The project focuses on OpenWrt first, with a provider-agnostic design and strong safety defaults. Every command is audited, every action is logged, and you're always in control.
 

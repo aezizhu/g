@@ -35,7 +35,7 @@ type Config struct {
 
 func defaultConfig() Config {
     return Config{
-        Author:         "aezizhu",
+        Author:         "AZ <Aezi.zhu@icloud.com>",
         Endpoint:       "https://generativelanguage.googleapis.com/v1beta",
         Model:          "gemini-1.5-flash",
         Provider:       "gemini",

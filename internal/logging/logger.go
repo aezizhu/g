@@ -7,7 +7,7 @@ import (
     "sync"
     "time"
 
-    "github.com/aezizhu/g/internal/plan"
+    "github.com/aezizhu/LuciCodex/internal/plan"
 )
 
 type Logger struct {
