@@ -50,7 +50,7 @@ Maintainer: aezizhu
 Section: utils
 Priority: optional
 Depends: libc
-Description: LuCICodex - Natural-language CLI for OpenWrt
+Description: LuciCodex - Natural-language CLI for OpenWrt
 EOF
   (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/lucicodex_${VERSION}_${arch_ipk}.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
@@ -70,7 +70,7 @@ Maintainer: aezizhu
 Section: luci
 Priority: optional
 Depends: luci-base, lucicodex
-Description: LuCI web UI for LuCICodex
+Description: LuCI web UI for LuciCodex
 EOF
   (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/luci-app-lucicodex_${VERSION}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"

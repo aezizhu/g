@@ -1,7 +1,7 @@
 local m, s, o
 
-m = Map("lucicodex", translate("LuCICodex Configuration"),
-    translate("Configure LLM providers and API keys for the LuCICodex natural language router assistant."))
+m = Map("lucicodex", translate("LuciCodex Configuration"),
+    translate("Configure LLM providers and API keys for the LuciCodex natural language router assistant."))
 
 s = m:section(TypedSection, "api", translate("API Configuration"))
 s.anonymous = true

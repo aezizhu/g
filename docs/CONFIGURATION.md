@@ -7,8 +7,8 @@ Sources and Precedence
 ----------------------
 
 1. Defaults (compiled)
-2. JSON file: `/etc/lucicodex/config.json` or `$HOME/.config/lucicodex/config.json` (legacy paths under `g` are still read)
-3. OpenWrt UCI: `lucicodex.@api[0].*` (legacy `g.@api[0].*` still supported)
+2. JSON file: `/etc/lucicodex/config.json` or `$HOME/.config/lucicodex/config.json`
+3. OpenWrt UCI: `lucicodex.@api[0].*`
 4. Environment variables
 
 Environment Variables
@@ -16,10 +16,11 @@ Environment Variables
 
 - `GEMINI_API_KEY`: API key (required unless set in UCI or file)
 - `GEMINI_ENDPOINT`: Override the base API endpoint
-- `G_MODEL`: Override the model name
-- `G_LOG_FILE`: Override log path
-- `G_ELEVATE`: Elevation command prefix (e.g., `doas -n`) when `needs_root` is set
-- `G_PROVIDER`: Provider name (default `gemini`)
+Additionally supported:
+- `LUCICODEX_MODEL`: Override the model name
+- `LUCICODEX_LOG_FILE`: Override log path
+- `LUCICODEX_ELEVATE`: Elevation command prefix (e.g., `doas -n`) when `needs_root` is set
+- `LUCICODEX_PROVIDER`: Provider name (default `gemini`)
 
 Sample JSON
 -----------

@@ -13,7 +13,7 @@ Paths
 
 - Controller: `luci.controller.lucicodex`
 - View: `lucicodex/overview`
-- Menu: System → LuCICodex
+- Menu: System → LuciCodex
 
 API
 ---

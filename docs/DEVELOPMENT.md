@@ -12,7 +12,7 @@ Build
 -----
 
 ```bash
-go build ./cmd/g
+go build ./cmd/lucicodex
 ```
 
 Run (dry run by default)
@@ -20,14 +20,14 @@ Run (dry run by default)
 
 ```bash
 export GEMINI_API_KEY=YOUR_KEY
-./g "restart wifi"
+./lucicodex "restart wifi"
 ```
 
 Executing
 ---------
 
 ```bash
-./g -dry-run=false -approve "open port 22 for lan"
+./lucicodex -dry-run=false -approve "open port 22 for lan"
 ```
 
 Project Layout

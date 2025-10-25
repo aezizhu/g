@@ -33,7 +33,7 @@ Ensure the following tools are installed and in `PATH`:
 Deployment
 ----------
 
-Copy the `lucicodex` binary to `/usr/bin/lucicodex` and ensure it is executable. A compatibility symlink to `/usr/bin/g` may also be created.
+Copy the `lucicodex` binary to `/usr/bin/lucicodex` and ensure it is executable.
 
 Feed Setup (optional)
 ---------------------

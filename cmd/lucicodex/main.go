@@ -43,7 +43,7 @@ func main() {
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Printf("LuCICodex version %s\n", version)
+        fmt.Printf("LuciCodex version %s\n", version)
 		os.Exit(0)
 	}
 
@@ -51,7 +51,7 @@ func main() {
 	if err != nil {
 		if !*setup {
 			fmt.Fprintf(os.Stderr, "Configuration error: %v\n", err)
-			fmt.Fprintf(os.Stderr, "Run with -setup to configure LuCICodex\n")
+            fmt.Fprintf(os.Stderr, "Run with -setup to configure LuciCodex\n")
 			os.Exit(1)
 		}
 		cfg = config.Config{}

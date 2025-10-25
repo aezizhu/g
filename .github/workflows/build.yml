@@ -32,11 +32,9 @@ jobs:
           if [ "${{ matrix.goarch }}" = "arm" ]; then
             GOOS=linux GOARCH=${{ matrix.goarch }} GOARM=${{ matrix.goarm }} \
               go build -trimpath -ldflags "-s -w" -o dist/lucicodex-linux-${{ matrix.goarch }}v${{ matrix.goarm }} ./cmd/lucicodex
-            cp dist/lucicodex-linux-${{ matrix.goarch }}v${{ matrix.goarm }} dist/g-linux-${{ matrix.goarch }}v${{ matrix.goarm }}
           else
             GOOS=linux GOARCH=${{ matrix.goarch }} \
               go build -trimpath -ldflags "-s -w" -o dist/lucicodex-linux-${{ matrix.goarch }} ./cmd/lucicodex
-            cp dist/lucicodex-linux-${{ matrix.goarch }} dist/g-linux-${{ matrix.goarch }}
           fi
 
       - name: Upload artifact

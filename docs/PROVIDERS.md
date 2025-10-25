@@ -12,7 +12,7 @@ Selection
 ---------
 
 - CLI flag: `-provider gemini|gemini-cli|openai|anthropic`
-- Env: `LUCICODEX_PROVIDER` (legacy `G_PROVIDER` still read)
+- Env: `LUCICODEX_PROVIDER`
 
 Gemini (API)
 ------------
@@ -23,7 +23,7 @@ Gemini CLI (External)
 ---------------------
 
 - Install `@google/gemini-cli` or another CLI that prints text.
-- Configure path via `LUCICODEX_EXTERNAL_GEMINI` (legacy `G_EXTERNAL_GEMINI`) (default `/usr/bin/gemini`).
+- Configure path via `LUCICODEX_EXTERNAL_GEMINI` (default `/usr/bin/gemini`).
 - `lucicodex` invokes it and attempts to parse a JSON plan from stdout.
 - For login, use the CLI’s built-in OAuth or device code flow.
 

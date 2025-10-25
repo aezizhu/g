@@ -1,7 +1,7 @@
 module("luci.controller.lucicodex", package.seeall)
 
 function index()
-    entry({"admin", "system", "lucicodex"}, firstchild(), _("LuCICodex"), 60).dependent = false
+    entry({"admin", "system", "lucicodex"}, firstchild(), _("LuciCodex"), 60).dependent = false
     entry({"admin", "system", "lucicodex", "overview"}, template("lucicodex/overview"), _("Overview"), 1)
     entry({"admin", "system", "lucicodex", "config"}, cbi("lucicodex"), _("Configuration"), 2)
     entry({"admin", "system", "lucicodex", "run"}, template("lucicodex/run"), _("Run"), 3)

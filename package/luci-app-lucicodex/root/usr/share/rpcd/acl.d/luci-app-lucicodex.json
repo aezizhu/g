@@ -1,6 +1,6 @@
 {
 	"luci-app-lucicodex": {
-		"description": "Grant access to LuCICodex assistant configuration and execution",
+		"description": "Grant access to LuciCodex assistant configuration and execution",
 		"read": {
 			"uci": [ "lucicodex" ],
 			"file": {
