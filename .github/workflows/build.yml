@@ -31,16 +31,18 @@ jobs:
           mkdir -p dist
           if [ "${{ matrix.goarch }}" = "arm" ]; then
             GOOS=linux GOARCH=${{ matrix.goarch }} GOARM=${{ matrix.goarm }} \
-              go build -trimpath -ldflags "-s -w" -o dist/g-linux-${{ matrix.goarch }}v${{ matrix.goarm }} ./cmd/g
+              go build -trimpath -ldflags "-s -w" -o dist/lucicodex-linux-${{ matrix.goarch }}v${{ matrix.goarm }} ./cmd/lucicodex
+            cp dist/lucicodex-linux-${{ matrix.goarch }}v${{ matrix.goarm }} dist/g-linux-${{ matrix.goarch }}v${{ matrix.goarm }}
           else
             GOOS=linux GOARCH=${{ matrix.goarch }} \
-              go build -trimpath -ldflags "-s -w" -o dist/g-linux-${{ matrix.goarch }} ./cmd/g
+              go build -trimpath -ldflags "-s -w" -o dist/lucicodex-linux-${{ matrix.goarch }} ./cmd/lucicodex
+            cp dist/lucicodex-linux-${{ matrix.goarch }} dist/g-linux-${{ matrix.goarch }}
           fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: g-linux-${{ matrix.goarch }}${{ matrix.goarm && format('v{0}', matrix.goarm) || '' }}
+          name: lucicodex-linux-${{ matrix.goarch }}${{ matrix.goarm && format('v{0}', matrix.goarm) || '' }}
           path: dist/*
 
 
