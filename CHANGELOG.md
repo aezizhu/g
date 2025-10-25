@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2025-10-25
+
+### Changed
+- **BREAKING**: Project renamed from "g" to "LuCICodex"
+- Binary renamed from `/usr/bin/g` to `/usr/bin/lucicodex`
+- UCI configuration package renamed from `g` to `lucicodex`
+- LuCI app renamed from `luci-app-g` to `luci-app-lucicodex`
+- File paths updated: `/tmp/lucicodex.log`, `/tmp/lucicodex-*.json`, `/var/lock/lucicodex.lock`
+- Environment variables: New `LUCICODEX_*` variables (e.g., `LUCICODEX_MODEL`, `LUCICODEX_PROVIDER`)
+- LuCI routes updated to `admin/system/lucicodex`
+
+### Added
+- **Backward compatibility**: Legacy `g` command, UCI config, env vars, and file paths continue to work
+- Automatic migration from legacy `g` UCI config to `lucicodex` config
+- Dual-read support for both new and legacy configuration paths
+- Legacy lock file detection to prevent conflicts during transition
+
+### Migration Notes
+- The `/usr/bin/g` command continues to work as an alias for backward compatibility
+- Existing UCI configuration at `/etc/config/g` is automatically migrated to `/etc/config/lucicodex`
+- Legacy environment variables (`G_MODEL`, `G_PROVIDER`, etc.) are still supported
+- Both new and legacy file paths are checked for metrics, plans, and logs
+
 ## [0.2.1] - 2025-10-25
 
 ### Fixed

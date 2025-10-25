@@ -1,4 +1,4 @@
-# g - Natural Language Assistant for OpenWrt
+# LuCICodex - Natural Language Assistant for OpenWrt
 
 **Control your OpenWrt router with plain English commands**
 
@@ -14,22 +14,24 @@ Author: aezizhu
 
 ---
 
-## What is g?
+## What is LuCICodex?
 
-**g** is an intelligent assistant that lets you manage your OpenWrt router using natural language instead of memorizing complex commands. Simply tell g what you want to do in plain English, and it will translate your request into safe, audited commands that you can review before execution.
+**LuCICodex** is an intelligent assistant that lets you manage your OpenWrt router using natural language instead of memorizing complex commands. Simply tell LuCICodex what you want to do in plain English, and it will translate your request into safe, audited commands that you can review before execution.
 
 **Example:** Instead of remembering `uci set wireless.radio0.disabled=0 && uci commit wireless && wifi reload`, just say: *"turn on the wifi"*
+
+**Note:** LuCICodex was previously named "g". The `g` command continues to work as an alias for backward compatibility.
 
 ---
 
 ## Table of Contents
 
-- [Why Use g?](#why-use-g)
+- [Why Use LuCICodex?](#why-use-g)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation on OpenWrt](#installation-on-openwrt)
   - [Getting Your API Key](#getting-your-api-key)
-- [Using g on Your Router](#using-g-on-your-router)
+- [Using LuCICodex on Your Router](#using-g-on-your-router)
   - [Method 1: Web Interface (Recommended)](#method-1-web-interface-recommended)
   - [Method 2: Command Line (SSH)](#method-2-command-line-ssh)
 - [Configuration Guide](#configuration-guide)
@@ -45,7 +47,7 @@ Author: aezizhu
 
 ---
 
-## Why Use g?
+## Why Use LuCICodex?
 
 ### For Home Users
 - **No command memorization**: Manage your router in plain English
@@ -79,7 +81,7 @@ Before installing g, you need:
 
 #### Step 1: Download the Package
 
-SSH into your router and download the g package for your architecture:
+SSH into your router and download the LuCICodex package for your architecture:
 
 ```bash
 # For MIPS routers (most common)
@@ -97,22 +99,22 @@ wget https://github.com/aezizhu/g/releases/latest/download/g-amd64.ipk
 
 ```bash
 opkg update
-opkg install /tmp/g-*.ipk
+opkg install /tmp/lucicodex-*.ipk
 ```
 
 #### Step 3: Install the Web Interface (Optional but Recommended)
 
 ```bash
-opkg install luci-app-g
+opkg install luci-app-lucicodex
 ```
 
 #### Step 4: Verify Installation
 
 ```bash
-g -version
+lucicodex -version
 ```
 
-You should see: `g version 0.2.1`
+You should see: `LuCICodex version 0.3.0`
 
 ### Getting Your API Key
 
@@ -139,7 +141,7 @@ You should see: `g version 0.2.1`
 
 ---
 
-## Using g on Your Router
+## Using LuCICodex on Your Router
 
 ### Method 1: Web Interface (Recommended)
 
@@ -149,7 +151,7 @@ This is the easiest way to use g, especially if you're not comfortable with comm
 
 1. Open your router's web interface (usually http://192.168.1.1)
 2. Log in with your admin credentials
-3. Navigate to **System → g Assistant**
+3. Navigate to **System → LuCICodex**
 
 #### Step 2: Configure Your API Key
 
@@ -179,15 +181,15 @@ If you prefer using SSH or want to automate tasks, you can use g from the comman
 
 ```bash
 # Set your Gemini API key
-uci set g.@api[0].provider='gemini'
-uci set g.@api[0].key='YOUR-API-KEY-HERE'
-uci commit g
+uci set lucicodex.@api[0].provider='gemini'
+uci set lucicodex.@api[0].key='YOUR-API-KEY-HERE'
+uci commit lucicodex
 ```
 
 #### Step 2: Test g with a Dry Run
 
 ```bash
-g "show me the wifi status"
+lucicodex "show me the wifi status"
 ```
 
 This will show you what commands g would run, but won't execute them yet.
@@ -197,13 +199,13 @@ This will show you what commands g would run, but won't execute them yet.
 If the commands look correct, run with approval:
 
 ```bash
-g -approve "restart the wifi"
+ lucicodex -approve "restart the wifi"
 ```
 
 Or use interactive mode to confirm each command:
 
 ```bash
-g -confirm-each "update the package list and install htop"
+ lucicodex -confirm-each "update the package list and install htop"
 ```
 
 ---
@@ -212,7 +214,7 @@ g -confirm-each "update the package list and install htop"
 
 ### Choosing Your AI Provider
 
-g supports multiple AI providers. Here's how to choose:
+LuCICodex supports multiple AI providers. Here's how to choose:
 
 | Provider | Best For | Cost | Speed |
 |----------|----------|------|-------|
@@ -222,7 +224,7 @@ g supports multiple AI providers. Here's how to choose:
 
 ### Configuring via Web Interface
 
-1. Go to **System → g Assistant → Configuration**
+1. Go to **System → LuCICodex → Configuration**
 2. Configure these settings:
 
 **API Settings:**
@@ -236,38 +238,38 @@ g supports multiple AI providers. Here's how to choose:
 - **Confirm Each Command**: Enable for extra safety
 - **Command Timeout**: How long to wait for each command (default: 30 seconds)
 - **Max Commands**: Maximum commands per request (default: 10)
-- **Log File**: Where to save execution logs (default: `/tmp/g.log`)
+- **Log File**: Where to save execution logs (default: `/tmp/lucicodex.log`)
 
 3. Click **Save & Apply**
 
 ### Configuring via Command Line
 
-All settings are stored in `/etc/config/g` using OpenWrt's UCI system:
+All settings are stored in `/etc/config/lucicodex` using OpenWrt's UCI system:
 
 ```bash
 # Configure Gemini
-uci set g.@api[0].provider='gemini'
-uci set g.@api[0].key='YOUR-GEMINI-KEY'
-uci set g.@api[0].model='gemini-1.5-flash'
+uci set lucicodex.@api[0].provider='gemini'
+uci set lucicodex.@api[0].key='YOUR-GEMINI-KEY'
+uci set lucicodex.@api[0].model='gemini-1.5-flash'
 
 # Configure OpenAI
-uci set g.@api[0].provider='openai'
-uci set g.@api[0].openai_key='YOUR-OPENAI-KEY'
-uci set g.@api[0].model='gpt-4'
+uci set lucicodex.@api[0].provider='openai'
+uci set lucicodex.@api[0].openai_key='YOUR-OPENAI-KEY'
+uci set lucicodex.@api[0].model='gpt-4'
 
 # Configure Anthropic
-uci set g.@api[0].provider='anthropic'
-uci set g.@api[0].anthropic_key='YOUR-ANTHROPIC-KEY'
-uci set g.@api[0].model='claude-3-sonnet-20240229'
+uci set lucicodex.@api[0].provider='anthropic'
+uci set lucicodex.@api[0].anthropic_key='YOUR-ANTHROPIC-KEY'
+uci set lucicodex.@api[0].model='claude-3-sonnet-20240229'
 
 # Safety settings
-uci set g.@settings[0].dry_run='1'          # 1=enabled, 0=disabled
-uci set g.@settings[0].confirm_each='0'     # 1=confirm each, 0=confirm once
-uci set g.@settings[0].timeout='30'         # seconds
-uci set g.@settings[0].max_commands='10'    # max commands per request
+uci set lucicodex.@settings[0].dry_run='1'          # 1=enabled, 0=disabled
+uci set lucicodex.@settings[0].confirm_each='0'     # 1=confirm each, 0=confirm once
+uci set lucicodex.@settings[0].timeout='30'         # seconds
+uci set lucicodex.@settings[0].max_commands='10'    # max commands per request
 
 # Apply changes
-uci commit g
+uci commit lucicodex
 ```
 
 ---
@@ -278,92 +280,92 @@ uci commit g
 
 ```bash
 # Check network status
-g "show me all network interfaces and their status"
+lucicodex "show me all network interfaces and their status"
 
 # Restart network
-g -approve "restart the network"
+ lucicodex -approve "restart the network"
 
 # Configure static IP
-g "set lan interface to static ip 192.168.1.1"
+lucicodex "set lan interface to static ip 192.168.1.1"
 ```
 
 ### WiFi Management
 
 ```bash
 # Check WiFi status
-g "show me the wifi status"
+lucicodex "show me the wifi status"
 
 # Change WiFi password
-g "change the wifi password to MyNewPassword123"
+lucicodex "change the wifi password to MyNewPassword123"
 
 # Enable/disable WiFi
-g -approve "turn off the wifi"
-g -approve "turn on the wifi"
+ lucicodex -approve "turn off the wifi"
+ lucicodex -approve "turn on the wifi"
 
 # Restart WiFi
-g -approve "restart wifi"
+ lucicodex -approve "restart wifi"
 ```
 
 ### Firewall Management
 
 ```bash
 # Check firewall rules
-g "show me the current firewall rules"
+lucicodex "show me the current firewall rules"
 
 # Open a port
-g "open port 8080 for tcp traffic from lan"
+lucicodex "open port 8080 for tcp traffic from lan"
 
 # Block an IP
-g "block ip address 192.168.1.100"
+lucicodex "block ip address 192.168.1.100"
 ```
 
 ### Package Management
 
 ```bash
 # Update package list
-g "update the package list"
+lucicodex "update the package list"
 
 # Install a package
-g "install the htop package"
+lucicodex "install the htop package"
 
 # List installed packages
-g "show me all installed packages"
+lucicodex "show me all installed packages"
 ```
 
 ### System Monitoring
 
 ```bash
 # Check system status
-g "show me system information and uptime"
+lucicodex "show me system information and uptime"
 
 # Check memory usage
-g "show me memory usage"
+lucicodex "show me memory usage"
 
 # Check disk space
-g "show me disk space usage"
+lucicodex "show me disk space usage"
 
 # View system logs
-g "show me the last 20 lines of system log"
+lucicodex "show me the last 20 lines of system log"
 ```
 
 ### Diagnostics
 
 ```bash
 # Ping test
-g "ping google.com 5 times"
+lucicodex "ping google.com 5 times"
 
 # DNS test
-g "check if dns is working"
+lucicodex "check if dns is working"
 
 # Check internet connectivity
-g "test internet connection"
+lucicodex "test internet connection"
 ```
 
 ---
 
 ## Safety Features
 
-g is designed with safety as the top priority:
+LuCICodex is designed with safety as the top priority:
 
 ### 1. Dry-Run Mode (Default)
 By default, g shows you what it would do without actually doing it. You must explicitly approve execution.
@@ -372,7 +374,7 @@ By default, g shows you what it would do without actually doing it. You must exp
 Every command is shown to you before execution. You can see exactly what will run on your system.
 
 ### 3. Policy Engine
-g has built-in rules about what commands are allowed:
+LuCICodex has built-in rules about what commands are allowed:
 
 **Allowed by default:**
 - `uci` (configuration)
@@ -390,16 +392,16 @@ g has built-in rules about what commands are allowed:
 - Fork bombs and other malicious patterns
 
 ### 4. No Shell Execution
-g never uses shell expansion or pipes. Commands are executed directly with exact arguments, preventing injection attacks.
+LuCICodex never uses shell expansion or pipes. Commands are executed directly with exact arguments, preventing injection attacks.
 
 ### 5. Execution Locking
-Only one g command can run at a time, preventing conflicts and race conditions.
+Only one LuCICodex command can run at a time, preventing conflicts and race conditions.
 
 ### 6. Timeouts
 Every command has a timeout (default 30 seconds) to prevent hanging.
 
 ### 7. Audit Logging
-All commands and their results are logged to `/tmp/g.log` for review.
+All commands and their results are logged to `/tmp/lucicodex.log` for review.
 
 ---
 
@@ -411,8 +413,8 @@ All commands and their results are logged to `/tmp/g.log` for review.
 
 ```bash
 # Via UCI
-uci set g.@api[0].key='YOUR-KEY-HERE'
-uci commit g
+uci set lucicodex.@api[0].key='YOUR-KEY-HERE'
+uci commit lucicodex
 
 # Or via environment variable
 export GEMINI_API_KEY='YOUR-KEY-HERE'
@@ -423,20 +425,20 @@ export GEMINI_API_KEY='YOUR-KEY-HERE'
 **Solution:** Another g command is running. Wait for it to finish, or remove the lock:
 
 ```bash
-rm /var/lock/g.lock
+rm /var/lock/lucicodex.lock
 ```
 
-### "command not found: g"
+### "command not found: lucicodex"
 
 **Solution:** Make sure g is installed and in your PATH:
 
 ```bash
-which g
-# Should show: /usr/bin/g
+which lucicodex
+# Should show: /usr/bin/lucicodex
 
 # If not found, reinstall:
 opkg update
-opkg install g
+opkg install lucicodex
 ```
 
 ### Commands are not executing
@@ -445,11 +447,11 @@ opkg install g
 
 ```bash
 # Use -approve flag
-g -approve "your command here"
+ lucicodex -approve "your command here"
 
 # Or disable dry-run in config
-uci set g.@settings[0].dry_run='0'
-uci commit g
+uci set lucicodex.@settings[0].dry_run='0'
+uci commit lucicodex
 ```
 
 ### "prompt too long (max 4096 chars)"
@@ -458,11 +460,11 @@ uci commit g
 
 ### Web interface not showing up
 
-**Solution:** Make sure luci-app-g is installed:
+**Solution:** Make sure luci-app-lucicodex is installed:
 
 ```bash
 opkg update
-opkg install luci-app-g
+opkg install luci-app-lucicodex
 /etc/init.d/uhttpd restart
 ```
 
@@ -477,7 +479,7 @@ Then clear your browser cache and reload.
 Start an interactive session where you can have a conversation with g:
 
 ```bash
-g -interactive
+ lucicodex -interactive
 ```
 
 ### JSON Output
@@ -485,7 +487,7 @@ g -interactive
 Get structured output for scripting:
 
 ```bash
-g -json "show network status" | jq .
+ lucicodex -json "show network status" | jq .
 ```
 
 ### Custom Configuration File
@@ -493,7 +495,7 @@ g -json "show network status" | jq .
 Use a custom config file instead of UCI:
 
 ```bash
-g -config /etc/g/custom-config.json "your command"
+ lucicodex -config /etc/g/custom-config.json "your command"
 ```
 
 ### Environment Variables
@@ -502,15 +504,15 @@ Override settings with environment variables:
 
 ```bash
 export GEMINI_API_KEY='your-key'
-export G_PROVIDER='gemini'
-export G_MODEL='gemini-1.5-flash'
-g "your command"
+export LUCICODEX_PROVIDER='gemini'
+export LUCICODEX_MODEL='gemini-1.5-flash'
+lucicodex "your command"
 ```
 
 ### Command-Line Flags
 
 ```bash
-g -help
+ lucicodex -help
 ```
 
 Available flags:
@@ -528,7 +530,7 @@ Available flags:
 
 ### Customizing the Policy
 
-Edit the allowlist and denylist in `/etc/config/g` or your config file:
+Edit the allowlist and denylist in `/etc/config/lucicodex` or your config file:
 
 ```json
 {

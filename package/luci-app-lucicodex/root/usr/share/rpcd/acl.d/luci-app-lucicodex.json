@@ -1,0 +1,27 @@
+{
+	"luci-app-lucicodex": {
+		"description": "Grant access to LuCICodex assistant configuration and execution",
+		"read": {
+			"uci": [ "lucicodex", "g" ],
+			"file": {
+				"/tmp/lucicodex.log": [ "read" ],
+				"/tmp/lucicodex-metrics.json": [ "read" ],
+				"/tmp/lucicodex-plan.json": [ "read" ],
+				"/tmp/g.log": [ "read" ],
+				"/tmp/g-metrics.json": [ "read" ],
+				"/tmp/g-plan.json": [ "read" ]
+			}
+		},
+		"write": {
+			"uci": [ "lucicodex", "g" ],
+			"file": {
+				"/var/lock/lucicodex.lock": [ "write" ],
+				"/var/lock/g.lock": [ "write" ]
+			},
+			"exec": {
+				"/usr/bin/lucicodex": [ "*" ],
+				"/usr/bin/g": [ "*" ]
+			}
+		}
+	}
+}
