@@ -20,7 +20,7 @@ import (
 	"github.com/aezizhu/g/internal/wizard"
 )
 
-const version = "0.2.1"
+const version = "0.3.0"
 
 func main() {
 	var (
@@ -43,7 +43,7 @@ func main() {
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Printf("g version %s\n", version)
+		fmt.Printf("LuCICodex version %s\n", version)
 		os.Exit(0)
 	}
 
@@ -51,7 +51,7 @@ func main() {
 	if err != nil {
 		if !*setup {
 			fmt.Fprintf(os.Stderr, "Configuration error: %v\n", err)
-			fmt.Fprintf(os.Stderr, "Run with -setup to configure g\n")
+			fmt.Fprintf(os.Stderr, "Run with -setup to configure LuCICodex\n")
 			os.Exit(1)
 		}
 		cfg = config.Config{}
@@ -96,8 +96,8 @@ func main() {
 
 	args := flag.Args()
 	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "Usage: g [flags] <prompt>\n")
-		fmt.Fprintf(os.Stderr, "Run 'g -h' for help\n")
+		fmt.Fprintf(os.Stderr, "Usage: lucicodex [flags] <prompt>\n")
+		fmt.Fprintf(os.Stderr, "Run 'lucicodex -h' for help\n")
 		os.Exit(1)
 	}
 

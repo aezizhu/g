@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Build multi-arch binaries and package .ipk for g and luci-app-g
+# Build multi-arch binaries and package .ipk for lucicodex and luci-app-lucicodex
 # Requires: go, tar, ar (binutils)
 
-VERSION=${VERSION:-"0.1.0"}
+VERSION=${VERSION:-"0.3.0"}
 OUT=${OUT:-"dist"}
 ARCHES=(amd64 arm64 arm mipsle mips)
 GOARM_DEFAULT=7
@@ -14,19 +14,24 @@ mkdir -p "$OUT"
 build_bin() {
   local arch="$1"
   local outbin
+  local legacy_bin
   if [[ "$arch" == "arm" ]]; then
     GOOS=linux GOARCH=arm GOARM=${GOARM:-$GOARM_DEFAULT} \
-      go build -trimpath -ldflags "-s -w" -o "$OUT/g-linux-${arch}v${GOARM:-$GOARM_DEFAULT}" ./cmd/g
-    outbin="$OUT/g-linux-${arch}v${GOARM:-$GOARM_DEFAULT}"
+      go build -trimpath -ldflags "-s -w" -o "$OUT/lucicodex-linux-${arch}v${GOARM:-$GOARM_DEFAULT}" ./cmd/lucicodex
+    outbin="$OUT/lucicodex-linux-${arch}v${GOARM:-$GOARM_DEFAULT}"
+    legacy_bin="$OUT/g-linux-${arch}v${GOARM:-$GOARM_DEFAULT}"
+    cp "$outbin" "$legacy_bin"
   else
     GOOS=linux GOARCH="$arch" \
-      go build -trimpath -ldflags "-s -w" -o "$OUT/g-linux-${arch}" ./cmd/g
-    outbin="$OUT/g-linux-${arch}"
+      go build -trimpath -ldflags "-s -w" -o "$OUT/lucicodex-linux-${arch}" ./cmd/lucicodex
+    outbin="$OUT/lucicodex-linux-${arch}"
+    legacy_bin="$OUT/g-linux-${arch}"
+    cp "$outbin" "$legacy_bin"
   fi
   echo "$outbin"
 }
 
-ipk_pack_g() {
+ipk_pack_lucicodex() {
   local arch="$1"; shift
   local binpath="$1"; shift
   local arch_ipk="$arch"
@@ -40,39 +45,44 @@ ipk_pack_g() {
   local work
   work=$(mktemp -d)
   mkdir -p "$work/control" "$work/data/usr/bin"
-  install -m0755 "$binpath" "$work/data/usr/bin/g"
+  install -m0755 "$binpath" "$work/data/usr/bin/lucicodex"
+  ln -s lucicodex "$work/data/usr/bin/g"
   cat > "$work/control/control" <<EOF
-Package: g
+Package: lucicodex
 Version: $VERSION
 Architecture: $arch_ipk
 Maintainer: aezizhu
 Section: utils
 Priority: optional
 Depends: libc
-Description: Natural-language CLI for OpenWrt
+Description: LuCICodex - Natural-language CLI for OpenWrt
 EOF
-  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/g_${VERSION}_${arch_ipk}.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
+  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/lucicodex_${VERSION}_${arch_ipk}.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
+  
+  cp "$OUT/lucicodex_${VERSION}_${arch_ipk}.ipk" "$OUT/g_${VERSION}_${arch_ipk}.ipk"
 }
 
 ipk_pack_luci() {
   local work
   work=$(mktemp -d)
-  mkdir -p "$work/control" "$work/data/usr/lib/lua/luci/controller" "$work/data/usr/lib/lua/luci/view/g"
-  install -m0644 package/luci-app-g/luasrc/controller/g.lua "$work/data/usr/lib/lua/luci/controller/g.lua"
-  install -m0644 package/luci-app-g/luasrc/view/g/overview.htm "$work/data/usr/lib/lua/luci/view/g/overview.htm"
+  mkdir -p "$work/control" "$work/data/usr/lib/lua/luci/controller" "$work/data/usr/lib/lua/luci/view/lucicodex"
+  install -m0644 package/luci-app-lucicodex/luasrc/controller/lucicodex.lua "$work/data/usr/lib/lua/luci/controller/lucicodex.lua"
+  install -m0644 package/luci-app-lucicodex/luasrc/view/lucicodex/overview.htm "$work/data/usr/lib/lua/luci/view/lucicodex/overview.htm"
   cat > "$work/control/control" <<EOF
-Package: luci-app-g
+Package: luci-app-lucicodex
 Version: $VERSION
 Architecture: all
 Maintainer: aezizhu
 Section: luci
 Priority: optional
-Depends: luci-base, g
-Description: LuCI web UI for g
+Depends: luci-base, lucicodex
+Description: LuCI web UI for LuCICodex
 EOF
-  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/luci-app-g_${VERSION}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
+  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/luci-app-lucicodex_${VERSION}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
+  
+  cp "$OUT/luci-app-lucicodex_${VERSION}_all.ipk" "$OUT/luci-app-g_${VERSION}_all.ipk"
 }
 
 sha256sum_all() {
@@ -82,7 +92,7 @@ sha256sum_all() {
 main() {
   for arch in "${ARCHES[@]}"; do
     bin=$(build_bin "$arch")
-    ipk_pack_g "$arch" "$bin"
+    ipk_pack_lucicodex "$arch" "$bin"
   done
   ipk_pack_luci
   sha256sum_all

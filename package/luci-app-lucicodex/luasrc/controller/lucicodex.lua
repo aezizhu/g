@@ -1,13 +1,13 @@
-module("luci.controller.g", package.seeall)
+module("luci.controller.lucicodex", package.seeall)
 
 function index()
-    entry({"admin", "system", "g"}, firstchild(), _("g Assistant"), 60).dependent = false
-    entry({"admin", "system", "g", "overview"}, template("g/overview"), _("Overview"), 1)
-    entry({"admin", "system", "g", "config"}, cbi("g"), _("Configuration"), 2)
-    entry({"admin", "system", "g", "run"}, template("g/run"), _("Run"), 3)
-    entry({"admin", "system", "g", "plan"}, call("action_plan")).leaf = true
-    entry({"admin", "system", "g", "execute"}, call("action_execute")).leaf = true
-    entry({"admin", "system", "g", "metrics"}, call("action_metrics")).leaf = true
+    entry({"admin", "system", "lucicodex"}, firstchild(), _("LuCICodex"), 60).dependent = false
+    entry({"admin", "system", "lucicodex", "overview"}, template("lucicodex/overview"), _("Overview"), 1)
+    entry({"admin", "system", "lucicodex", "config"}, cbi("lucicodex"), _("Configuration"), 2)
+    entry({"admin", "system", "lucicodex", "run"}, template("lucicodex/run"), _("Run"), 3)
+    entry({"admin", "system", "lucicodex", "plan"}, call("action_plan")).leaf = true
+    entry({"admin", "system", "lucicodex", "execute"}, call("action_execute")).leaf = true
+    entry({"admin", "system", "lucicodex", "metrics"}, call("action_metrics")).leaf = true
 end
 
 function action_plan()
@@ -36,7 +36,7 @@ function action_plan()
         return
     end
     
-    local lockfile = "/var/lock/g.lock"
+    local lockfile = "/var/lock/lucicodex.lock"
     local lock = nixio.open(lockfile, "w")
     if not lock then
         http.status(503, "Service Unavailable")
@@ -51,7 +51,7 @@ function action_plan()
         return
     end
     
-    local argv = {"/usr/bin/g", "-json", "-dry-run"}
+    local argv = {"/usr/bin/lucicodex", "-json", "-dry-run"}
     table.insert(argv, data.prompt)
     
     local pid = nixio.fork()
@@ -65,8 +65,12 @@ function action_plan()
     nixio.fs.unlink(lockfile)
     
     if status == "exited" and code == 0 then
-        local output_file = "/tmp/g-plan.json"
+        local output_file = "/tmp/lucicodex-plan.json"
         local f = io.open(output_file, "r")
+        if not f then
+            output_file = "/tmp/g-plan.json"
+            f = io.open(output_file, "r")
+        end
         if f then
             local content = f:read("*all")
             f:close()
@@ -109,7 +113,7 @@ function action_execute()
         return
     end
     
-    local lockfile = "/var/lock/g.lock"
+    local lockfile = "/var/lock/lucicodex.lock"
     local lock = nixio.open(lockfile, "w")
     if not lock then
         http.status(503, "Service Unavailable")
@@ -124,7 +128,7 @@ function action_execute()
         return
     end
     
-    local argv = {"/usr/bin/g", "-json"}
+    local argv = {"/usr/bin/lucicodex", "-json"}
     
     if data.dry_run then
         table.insert(argv, "-dry-run")
@@ -206,7 +210,10 @@ function action_metrics()
         top_command = "unknown"
     }
     
-    local f = io.open("/tmp/g-metrics.json", "r")
+    local f = io.open("/tmp/lucicodex-metrics.json", "r")
+    if not f then
+        f = io.open("/tmp/g-metrics.json", "r")
+    end
     if f then
         local content = f:read("*all")
         f:close()

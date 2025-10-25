@@ -1,7 +1,7 @@
 local m, s, o
 
-m = Map("g", translate("g Assistant Configuration"),
-    translate("Configure LLM providers and API keys for the g natural language router assistant."))
+m = Map("lucicodex", translate("LuCICodex Configuration"),
+    translate("Configure LLM providers and API keys for the LuCICodex natural language router assistant."))
 
 s = m:section(TypedSection, "api", translate("API Configuration"))
 s.anonymous = true
@@ -71,7 +71,7 @@ o.default = "10"
 
 o = s:option(Value, "log_file", translate("Log File"),
     translate("Path to log file for command execution history."))
-o.placeholder = "/tmp/g.log"
-o.default = "/tmp/g.log"
+o.placeholder = "/tmp/lucicodex.log"
+o.default = "/tmp/lucicodex.log"
 
 return m

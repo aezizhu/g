@@ -1,6 +1,6 @@
 <%+header%>
 
-<h2 name="content"><%:Run g Assistant%></h2>
+<h2 name="content"><%:Run LuCICodex%></h2>
 
 <div class="cbi-map">
     <div class="cbi-section">
@@ -79,7 +79,7 @@ function generatePlan() {
     document.getElementById('result-section').style.display = 'none';
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '<%=url("admin/system/g/plan")%>', true);
+    xhr.open('POST', '<%=url("admin/system/lucicodex/plan")%>', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     
     xhr.onload = function() {
@@ -183,7 +183,7 @@ function executePlan() {
     document.getElementById('result-section').style.display = 'none';
 
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '<%=url("admin/system/g/execute")%>', true);
+    xhr.open('POST', '<%=url("admin/system/lucicodex/execute")%>', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     
     xhr.onload = function() {
