@@ -3,48 +3,201 @@ module("luci.controller.g", package.seeall)
 function index()
     entry({"admin", "system", "g"}, firstchild(), _("g Assistant"), 60).dependent = false
     entry({"admin", "system", "g", "overview"}, template("g/overview"), _("Overview"), 1)
-    entry({"admin", "system", "g", "run"}, call("action_run")).leaf = true
+    entry({"admin", "system", "g", "config"}, cbi("g"), _("Configuration"), 2)
+    entry({"admin", "system", "g", "run"}, template("g/run"), _("Run"), 3)
+    entry({"admin", "system", "g", "plan"}, call("action_plan")).leaf = true
+    entry({"admin", "system", "g", "execute"}, call("action_execute")).leaf = true
     entry({"admin", "system", "g", "metrics"}, call("action_metrics")).leaf = true
 end
 
-function action_run()
+function action_plan()
     local http = require "luci.http"
-    local util = require "luci.util"
+    local nixio = require "nixio"
     local json = require "luci.jsonc"
-
-    local body = http.formvalue("q") or ""
-    if body == "" then
-        http.status(400, "Bad Request")
-        http.write_json({ error = "missing q" })
-        return
-    }
-
-    local dry_run = http.formvalue("dry_run")
-    local cmd = {"/usr/bin/g"}
     
-    if dry_run then
-        table.insert(cmd, "-dry-run=true")
-    else
-        table.insert(cmd, "-dry-run=false")
-        table.insert(cmd, "-approve")
+    if http.getenv("REQUEST_METHOD") ~= "POST" then
+        http.status(405, "Method Not Allowed")
+        http.write_json({ error = "POST required" })
+        return
     end
     
-    table.insert(cmd, body)
+    local body = http.content()
+    local data = json.parse(body)
     
-    local output = util.exec(table.concat(cmd, " ")) or ""
-    http.prepare_content("application/json")
-    http.write_json({ ok = true, output = output })
+    if not data or not data.prompt or data.prompt == "" then
+        http.status(400, "Bad Request")
+        http.write_json({ error = "missing prompt" })
+        return
+    end
+    
+    if #data.prompt > 4096 then
+        http.status(400, "Bad Request")
+        http.write_json({ error = "prompt too long (max 4096 chars)" })
+        return
+    end
+    
+    local lockfile = "/var/lock/g.lock"
+    local lock = nixio.open(lockfile, "w")
+    if not lock then
+        http.status(503, "Service Unavailable")
+        http.write_json({ error = "execution in progress" })
+        return
+    end
+    
+    if not lock:lock("tlock") then
+        lock:close()
+        http.status(503, "Service Unavailable")
+        http.write_json({ error = "execution in progress" })
+        return
+    end
+    
+    local argv = {"/usr/bin/g", "-json", "-dry-run"}
+    table.insert(argv, data.prompt)
+    
+    local pid = nixio.fork()
+    if pid == 0 then
+        nixio.exec(unpack(argv))
+        nixio.exit(1)
+    end
+    
+    local status, code = nixio.waitpid(pid)
+    lock:close()
+    nixio.fs.unlink(lockfile)
+    
+    if status == "exited" and code == 0 then
+        local output_file = "/tmp/g-plan.json"
+        local f = io.open(output_file, "r")
+        if f then
+            local content = f:read("*all")
+            f:close()
+            local plan = json.parse(content)
+            if plan then
+                http.prepare_content("application/json")
+                http.write_json({ ok = true, plan = plan })
+                return
+            end
+        end
+    end
+    
+    http.status(500, "Internal Server Error")
+    http.write_json({ error = "failed to generate plan" })
+end
+
+function action_execute()
+    local http = require "luci.http"
+    local nixio = require "nixio"
+    local json = require "luci.jsonc"
+    
+    if http.getenv("REQUEST_METHOD") ~= "POST" then
+        http.status(405, "Method Not Allowed")
+        http.write_json({ error = "POST required" })
+        return
+    end
+    
+    local body = http.content()
+    local data = json.parse(body)
+    
+    if not data or not data.prompt or data.prompt == "" then
+        http.status(400, "Bad Request")
+        http.write_json({ error = "missing prompt" })
+        return
+    end
+    
+    if #data.prompt > 4096 then
+        http.status(400, "Bad Request")
+        http.write_json({ error = "prompt too long (max 4096 chars)" })
+        return
+    end
+    
+    local lockfile = "/var/lock/g.lock"
+    local lock = nixio.open(lockfile, "w")
+    if not lock then
+        http.status(503, "Service Unavailable")
+        http.write_json({ error = "execution in progress" })
+        return
+    end
+    
+    if not lock:lock("tlock") then
+        lock:close()
+        http.status(503, "Service Unavailable")
+        http.write_json({ error = "execution in progress" })
+        return
+    end
+    
+    local argv = {"/usr/bin/g", "-json"}
+    
+    if data.dry_run then
+        table.insert(argv, "-dry-run")
+    else
+        table.insert(argv, "-approve")
+    end
+    
+    if data.timeout and tonumber(data.timeout) then
+        table.insert(argv, "-timeout=" .. tostring(data.timeout))
+    end
+    
+    table.insert(argv, data.prompt)
+    
+    local stdout_r, stdout_w = nixio.pipe()
+    local stderr_r, stderr_w = nixio.pipe()
+    
+    local pid = nixio.fork()
+    if pid == 0 then
+        stdout_r:close()
+        stderr_r:close()
+        nixio.dup(stdout_w, nixio.stdout)
+        nixio.dup(stderr_w, nixio.stderr)
+        stdout_w:close()
+        stderr_w:close()
+        nixio.exec(unpack(argv))
+        nixio.exit(1)
+    end
+    
+    stdout_w:close()
+    stderr_w:close()
+    
+    local output = ""
+    local errors = ""
+    
+    while true do
+        local chunk = stdout_r:read(1024)
+        if not chunk or #chunk == 0 then break end
+        output = output .. chunk
+    end
+    
+    while true do
+        local chunk = stderr_r:read(1024)
+        if not chunk or #chunk == 0 then break end
+        errors = errors .. chunk
+    end
+    
+    stdout_r:close()
+    stderr_r:close()
+    
+    local status, code = nixio.waitpid(pid)
+    lock:close()
+    nixio.fs.unlink(lockfile)
+    
+    if status == "exited" and code == 0 then
+        local result = json.parse(output)
+        if result then
+            http.prepare_content("application/json")
+            http.write_json({ ok = true, result = result })
+            return
+        end
+        http.prepare_content("application/json")
+        http.write_json({ ok = true, output = output })
+        return
+    end
+    
+    http.status(500, "Internal Server Error")
+    http.write_json({ error = "execution failed", output = output, errors = errors, code = code })
 end
 
 function action_metrics()
     local http = require "luci.http"
-    local util = require "luci.util"
     local json = require "luci.jsonc"
-
-    -- Try to get metrics from g CLI
-    local output = util.exec("/usr/bin/g -auth status 2>/dev/null") or "{}"
     
-    -- Parse or provide default metrics
     local metrics = {
         total_requests = 0,
         success_rate = 0.0,
@@ -53,7 +206,6 @@ function action_metrics()
         top_command = "unknown"
     }
     
-    -- Try to load from file
     local f = io.open("/tmp/g-metrics.json", "r")
     if f then
         local content = f:read("*all")

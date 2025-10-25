@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# Initialize g configuration if it doesn't exist
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@g[-1]
+	add ucitrack g
+	set ucitrack.@g[-1].init=g
+	commit ucitrack
+EOF
+
+# Create default g config if it doesn't exist
+if ! uci -q get g.@api[0] >/dev/null; then
+	uci -q batch <<-EOF
+		add g api
+		set g.@api[0].provider='gemini'
+		set g.@api[0].key=''
+		set g.@api[0].model='gemini-1.5-flash'
+		set g.@api[0].endpoint='https://generativelanguage.googleapis.com/v1beta'
+		set g.@api[0].openai_key=''
+		set g.@api[0].anthropic_key=''
+		commit g
+	EOF
+fi
+
+if ! uci -q get g.@settings[0] >/dev/null; then
+	uci -q batch <<-EOF
+		add g settings
+		set g.@settings[0].dry_run='1'
+		set g.@settings[0].confirm_each='0'
+		set g.@settings[0].timeout='30'
+		set g.@settings[0].max_commands='10'
+		set g.@settings[0].log_file='/tmp/g.log'
+		commit g
+	EOF
+fi
+
+# Set proper permissions on config file
+chmod 600 /etc/config/g 2>/dev/null || true
+
+exit 0

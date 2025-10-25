@@ -7,6 +7,7 @@ import (
     "os"
     "os/exec"
     "path/filepath"
+    "strconv"
     "strings"
 )
 
@@ -107,6 +108,36 @@ func Load(path string) (Config, error) {
     }
     if ep, _ := uciGet("g.@api[0].endpoint"); ep != "" {
         cfg.Endpoint = ep
+    }
+    if prov, _ := uciGet("g.@api[0].provider"); prov != "" {
+        cfg.Provider = prov
+    }
+    if openaiKey, _ := uciGet("g.@api[0].openai_key"); openaiKey != "" {
+        cfg.OpenAIAPIKey = openaiKey
+    }
+    if anthropicKey, _ := uciGet("g.@api[0].anthropic_key"); anthropicKey != "" {
+        cfg.AnthropicAPIKey = anthropicKey
+    }
+    if dryRun, _ := uciGet("g.@settings[0].dry_run"); dryRun == "1" {
+        cfg.DryRun = true
+    } else if dryRun == "0" {
+        cfg.DryRun = false
+    }
+    if confirmEach, _ := uciGet("g.@settings[0].confirm_each"); confirmEach == "1" {
+        cfg.AutoApprove = false
+    }
+    if timeout, _ := uciGet("g.@settings[0].timeout"); timeout != "" {
+        if t, err := strconv.Atoi(timeout); err == nil && t > 0 {
+            cfg.TimeoutSeconds = t
+        }
+    }
+    if maxCmds, _ := uciGet("g.@settings[0].max_commands"); maxCmds != "" {
+        if m, err := strconv.Atoi(maxCmds); err == nil && m > 0 {
+            cfg.MaxCommands = m
+        }
+    }
+    if logFile, _ := uciGet("g.@settings[0].log_file"); logFile != "" {
+        cfg.LogFile = logFile
     }
 
     // Env
