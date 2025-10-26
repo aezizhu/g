@@ -26,7 +26,6 @@ endef
 define Package/lucicodex/install
         $(INSTALL_DIR) $(1)/usr/bin
         $(INSTALL_BIN) ../../dist/lucicodex-linux-$(ARCH) $(1)/usr/bin/lucicodex || true
-        ln -sf lucicodex $(1)/usr/bin/g || true
 endef
 
 $(eval $(call BuildPackage,lucicodex))

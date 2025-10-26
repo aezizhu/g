@@ -81,18 +81,11 @@ func Load(path string) (Config, error) {
     if path == "" {
         if fileExists("/etc/lucicodex/config.json") {
             path = "/etc/lucicodex/config.json"
-        } else if fileExists("/etc/g/config.json") {
-            path = "/etc/g/config.json"
         } else {
             home, _ := os.UserHomeDir()
             p := filepath.Join(home, ".config", "lucicodex", "config.json")
             if fileExists(p) {
                 path = p
-            } else {
-                p = filepath.Join(home, ".config", "g", "config.json")
-                if fileExists(p) {
-                    path = p
-                }
             }
         }
     }
@@ -106,56 +99,34 @@ func Load(path string) (Config, error) {
         }
     }
 
-    // UCI (OpenWrt) - try new lucicodex keys first, fallback to legacy g keys
+    // UCI (OpenWrt)
     if key, _ := uciGet("lucicodex.@api[0].key"); key != "" {
-        cfg.APIKey = key
-    } else if key, _ := uciGet("g.@api[0].key"); key != "" {
         cfg.APIKey = key
     }
     if m, _ := uciGet("lucicodex.@api[0].model"); m != "" {
         cfg.Model = m
-    } else if m, _ := uciGet("g.@api[0].model"); m != "" {
-        cfg.Model = m
     }
     if ep, _ := uciGet("lucicodex.@api[0].endpoint"); ep != "" {
-        cfg.Endpoint = ep
-    } else if ep, _ := uciGet("g.@api[0].endpoint"); ep != "" {
         cfg.Endpoint = ep
     }
     if prov, _ := uciGet("lucicodex.@api[0].provider"); prov != "" {
         cfg.Provider = prov
-    } else if prov, _ := uciGet("g.@api[0].provider"); prov != "" {
-        cfg.Provider = prov
     }
     if openaiKey, _ := uciGet("lucicodex.@api[0].openai_key"); openaiKey != "" {
         cfg.OpenAIAPIKey = openaiKey
-    } else if openaiKey, _ := uciGet("g.@api[0].openai_key"); openaiKey != "" {
-        cfg.OpenAIAPIKey = openaiKey
     }
     if anthropicKey, _ := uciGet("lucicodex.@api[0].anthropic_key"); anthropicKey != "" {
-        cfg.AnthropicAPIKey = anthropicKey
-    } else if anthropicKey, _ := uciGet("g.@api[0].anthropic_key"); anthropicKey != "" {
         cfg.AnthropicAPIKey = anthropicKey
     }
     if dryRun, _ := uciGet("lucicodex.@settings[0].dry_run"); dryRun == "1" {
         cfg.DryRun = true
     } else if dryRun == "0" {
         cfg.DryRun = false
-    } else if dryRun, _ := uciGet("g.@settings[0].dry_run"); dryRun == "1" {
-        cfg.DryRun = true
-    } else if dryRun == "0" {
-        cfg.DryRun = false
     }
     if confirmEach, _ := uciGet("lucicodex.@settings[0].confirm_each"); confirmEach == "1" {
         cfg.AutoApprove = false
-    } else if confirmEach, _ := uciGet("g.@settings[0].confirm_each"); confirmEach == "1" {
-        cfg.AutoApprove = false
     }
     if timeout, _ := uciGet("lucicodex.@settings[0].timeout"); timeout != "" {
-        if t, err := strconv.Atoi(timeout); err == nil && t > 0 {
-            cfg.TimeoutSeconds = t
-        }
-    } else if timeout, _ := uciGet("g.@settings[0].timeout"); timeout != "" {
         if t, err := strconv.Atoi(timeout); err == nil && t > 0 {
             cfg.TimeoutSeconds = t
         }
@@ -164,14 +135,8 @@ func Load(path string) (Config, error) {
         if m, err := strconv.Atoi(maxCmds); err == nil && m > 0 {
             cfg.MaxCommands = m
         }
-    } else if maxCmds, _ := uciGet("g.@settings[0].max_commands"); maxCmds != "" {
-        if m, err := strconv.Atoi(maxCmds); err == nil && m > 0 {
-            cfg.MaxCommands = m
-        }
     }
     if logFile, _ := uciGet("lucicodex.@settings[0].log_file"); logFile != "" {
-        cfg.LogFile = logFile
-    } else if logFile, _ := uciGet("g.@settings[0].log_file"); logFile != "" {
         cfg.LogFile = logFile
     }
 
@@ -183,22 +148,14 @@ func Load(path string) (Config, error) {
     }
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_MODEL")); v != "" {
         cfg.Model = v
-    } else if v := strings.TrimSpace(os.Getenv("G_MODEL")); v != "" {
-        cfg.Model = v
     }
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_LOG_FILE")); v != "" {
-        cfg.LogFile = v
-    } else if v := strings.TrimSpace(os.Getenv("G_LOG_FILE")); v != "" {
         cfg.LogFile = v
     }
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_ELEVATE")); v != "" {
         cfg.ElevateCommand = v
-    } else if v := strings.TrimSpace(os.Getenv("G_ELEVATE")); v != "" {
-        cfg.ElevateCommand = v
     }
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_PROVIDER")); v != "" {
-        cfg.Provider = v
-    } else if v := strings.TrimSpace(os.Getenv("G_PROVIDER")); v != "" {
         cfg.Provider = v
     }
     if v := strings.TrimSpace(os.Getenv("OPENAI_API_KEY")); v != "" {
@@ -208,8 +165,6 @@ func Load(path string) (Config, error) {
         cfg.AnthropicAPIKey = v
     }
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_EXTERNAL_GEMINI")); v != "" {
-        cfg.ExternalGeminiPath = v
-    } else if v := strings.TrimSpace(os.Getenv("G_EXTERNAL_GEMINI")); v != "" {
         cfg.ExternalGeminiPath = v
     }
 

@@ -4,7 +4,7 @@ set -eu
 # Publish this repo to GitHub using HTTPS and a Personal Access Token.
 # Required env:
 #   GITHUB_USER    (e.g., aezizhu)
-#   GITHUB_REPO    (e.g., g)
+#   GITHUB_REPO    (e.g., LuciCodex)
 #   GITHUB_TOKEN   (repo scope)
 
 if [ -z "${GITHUB_USER:-}" ] || [ -z "${GITHUB_REPO:-}" ] || [ -z "${GITHUB_TOKEN:-}" ]; then

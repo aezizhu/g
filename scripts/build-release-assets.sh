@@ -19,14 +19,10 @@ build_bin() {
     GOOS=linux GOARCH=arm GOARM=${GOARM:-$GOARM_DEFAULT} \
       go build -trimpath -ldflags "-s -w" -o "$OUT/lucicodex-linux-${arch}v${GOARM:-$GOARM_DEFAULT}" ./cmd/lucicodex
     outbin="$OUT/lucicodex-linux-${arch}v${GOARM:-$GOARM_DEFAULT}"
-    legacy_bin="$OUT/g-linux-${arch}v${GOARM:-$GOARM_DEFAULT}"
-    cp "$outbin" "$legacy_bin"
   else
     GOOS=linux GOARCH="$arch" \
       go build -trimpath -ldflags "-s -w" -o "$OUT/lucicodex-linux-${arch}" ./cmd/lucicodex
     outbin="$OUT/lucicodex-linux-${arch}"
-    legacy_bin="$OUT/g-linux-${arch}"
-    cp "$outbin" "$legacy_bin"
   fi
   echo "$outbin"
 }
@@ -46,7 +42,6 @@ ipk_pack_lucicodex() {
   work=$(mktemp -d)
   mkdir -p "$work/control" "$work/data/usr/bin"
   install -m0755 "$binpath" "$work/data/usr/bin/lucicodex"
-  ln -s lucicodex "$work/data/usr/bin/g"
   cat > "$work/control/control" <<EOF
 Package: lucicodex
 Version: $VERSION
@@ -55,12 +50,10 @@ Maintainer: aezizhu
 Section: utils
 Priority: optional
 Depends: libc
-Description: LuCICodex - Natural-language CLI for OpenWrt
+Description: LuciCodex - Natural-language CLI for OpenWrt
 EOF
   (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/lucicodex_${VERSION}_${arch_ipk}.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
-  
-  cp "$OUT/lucicodex_${VERSION}_${arch_ipk}.ipk" "$OUT/g_${VERSION}_${arch_ipk}.ipk"
 }
 
 ipk_pack_luci() {
@@ -77,12 +70,10 @@ Maintainer: aezizhu
 Section: luci
 Priority: optional
 Depends: luci-base, lucicodex
-Description: LuCI web UI for LuCICodex
+Description: LuCI web UI for LuciCodex
 EOF
   (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/luci-app-lucicodex_${VERSION}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
-  
-  cp "$OUT/luci-app-lucicodex_${VERSION}_all.ipk" "$OUT/luci-app-g_${VERSION}_all.ipk"
 }
 
 sha256sum_all() {

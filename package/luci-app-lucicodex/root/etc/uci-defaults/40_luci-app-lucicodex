@@ -1,16 +1,5 @@
 #!/bin/sh
 
-# Migrate from legacy "g" config to "lucicodex" if needed
-if [ -f /etc/config/g ] && [ ! -f /etc/config/lucicodex ]; then
-	# Export old config and convert to new package name
-	uci export g | sed 's/^package g$/package lucicodex/' | sed "s/^g\./lucicodex./" > /tmp/lucicodex-migrate.tmp
-	if [ -s /tmp/lucicodex-migrate.tmp ]; then
-		uci import lucicodex < /tmp/lucicodex-migrate.tmp
-		uci commit lucicodex
-		rm -f /tmp/lucicodex-migrate.tmp
-	fi
-fi
-
 # Initialize lucicodex configuration
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@lucicodex[-1]

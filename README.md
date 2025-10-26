@@ -20,7 +20,7 @@ Author: AZ <Aezi.zhu@icloud.com>
 
 **Example:** Instead of remembering `uci set wireless.radio0.disabled=0 && uci commit wireless && wifi reload`, just say: *"turn on the wifi"*
 
-**Note:** LuCICodex was previously named "g". The `g` command continues to work as an alias for backward compatibility.
+Note: This project was previously named "g". All legacy aliases have been removed; use `lucicodex` exclusively.
 
 ---
 
@@ -186,7 +186,7 @@ uci set lucicodex.@api[0].key='YOUR-API-KEY-HERE'
 uci commit lucicodex
 ```
 
-#### Step 2: Test g with a Dry Run
+#### Step 2: Test with a Dry Run
 
 ```bash
 lucicodex "show me the wifi status"
@@ -368,7 +368,7 @@ lucicodex "test internet connection"
 LuCICodex is designed with safety as the top priority:
 
 ### 1. Dry-Run Mode (Default)
-By default, g shows you what it would do without actually doing it. You must explicitly approve execution.
+By default, LuciCodex shows you what it would do without actually doing it. You must explicitly approve execution.
 
 ### 2. Command Review
 Every command is shown to you before execution. You can see exactly what will run on your system.
@@ -422,7 +422,7 @@ export GEMINI_API_KEY='YOUR-KEY-HERE'
 
 ### "execution in progress"
 
-**Solution:** Another g command is running. Wait for it to finish, or remove the lock:
+**Solution:** Another LuciCodex command is running. Wait for it to finish, or remove the lock:
 
 ```bash
 rm /var/lock/lucicodex.lock
@@ -430,7 +430,7 @@ rm /var/lock/lucicodex.lock
 
 ### "command not found: lucicodex"
 
-**Solution:** Make sure g is installed and in your PATH:
+**Solution:** Make sure lucicodex is installed and in your PATH:
 
 ```bash
 which lucicodex
