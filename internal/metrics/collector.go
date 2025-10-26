@@ -148,34 +148,48 @@ func (c *Collector) addRecentRequest(req RequestMetric) {
     }
 }
 
-func (c *Collector) GetMetrics() *Metrics {
+func (c *Collector) snapshot() *Metrics {
     c.metrics.mu.RLock()
     defer c.metrics.mu.RUnlock()
     
-    // Create a copy to avoid race conditions
-    copy := *c.metrics
-    copy.ProviderUsage = make(map[string]int64)
-    copy.CommandPatterns = make(map[string]int64)
-    copy.ErrorTypes = make(map[string]int64)
+    out := &Metrics{
+        TotalRequests:   c.metrics.TotalRequests,
+        TotalCommands:   c.metrics.TotalCommands,
+        SuccessfulRuns:  c.metrics.SuccessfulRuns,
+        FailedRuns:      c.metrics.FailedRuns,
+        TotalDuration:   c.metrics.TotalDuration,
+        AverageDuration: c.metrics.AverageDuration,
+        StartTime:       c.metrics.StartTime,
+        LastRequestTime: c.metrics.LastRequestTime,
+        maxRecent:       c.metrics.maxRecent,
+    }
+    
+    out.ProviderUsage = make(map[string]int64, len(c.metrics.ProviderUsage))
+    out.CommandPatterns = make(map[string]int64, len(c.metrics.CommandPatterns))
+    out.ErrorTypes = make(map[string]int64, len(c.metrics.ErrorTypes))
     
     for k, v := range c.metrics.ProviderUsage {
-        copy.ProviderUsage[k] = v
+        out.ProviderUsage[k] = v
     }
     for k, v := range c.metrics.CommandPatterns {
-        copy.CommandPatterns[k] = v
+        out.CommandPatterns[k] = v
     }
     for k, v := range c.metrics.ErrorTypes {
-        copy.ErrorTypes[k] = v
+        out.ErrorTypes[k] = v
     }
     
-    return &copy
+    out.RecentRequests = append([]RequestMetric(nil), c.metrics.RecentRequests...)
+    
+    return out
+}
+
+func (c *Collector) GetMetrics() *Metrics {
+    return c.snapshot()
 }
 
 func (c *Collector) Save() error {
-    c.metrics.mu.RLock()
-    data, err := json.MarshalIndent(c.metrics, "", "  ")
-    c.metrics.mu.RUnlock()
-    
+    m := c.snapshot()
+    data, err := json.MarshalIndent(m, "", "  ")
     if err != nil {
         return err
     }

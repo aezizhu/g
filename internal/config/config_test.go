@@ -76,11 +76,9 @@ func TestLoadWithEnvVars(t *testing.T) {
 }
 
 func TestLoadWithOpenAIEnvVars(t *testing.T) {
-    os.Setenv("GEMINI_API_KEY", "gemini-key")
     os.Setenv("OPENAI_API_KEY", "openai-key-123")
     os.Setenv("LUCICODEX_PROVIDER", "openai")
 	defer func() {
-        os.Unsetenv("GEMINI_API_KEY")
         os.Unsetenv("OPENAI_API_KEY")
         os.Unsetenv("LUCICODEX_PROVIDER")
 	}()
@@ -99,11 +97,9 @@ func TestLoadWithOpenAIEnvVars(t *testing.T) {
 }
 
 func TestLoadWithAnthropicEnvVars(t *testing.T) {
-    os.Setenv("GEMINI_API_KEY", "gemini-key")
     os.Setenv("ANTHROPIC_API_KEY", "anthropic-key-123")
     os.Setenv("LUCICODEX_PROVIDER", "anthropic")
 	defer func() {
-        os.Unsetenv("GEMINI_API_KEY")
         os.Unsetenv("ANTHROPIC_API_KEY")
         os.Unsetenv("LUCICODEX_PROVIDER")
 	}()
@@ -216,12 +212,12 @@ func TestLoadEnvOverridesFile(t *testing.T) {
 }
 
 func TestLoadMissingAPIKey(t *testing.T) {
-	_, err := Load("")
-	if err == nil {
-		t.Error("expected error when API key is missing")
+	cfg, err := Load("")
+	if err != nil {
+		t.Errorf("Load should not fail without API key (lazy validation): %v", err)
 	}
-	if err.Error() != "API key not configured" {
-		t.Errorf("expected 'API key not configured' error, got %q", err.Error())
+	if cfg.APIKey != "" {
+		t.Errorf("expected empty API key, got %q", cfg.APIKey)
 	}
 }
 

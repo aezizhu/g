@@ -53,7 +53,7 @@ Note: This project was previously named "g". All legacy aliases have been remove
 - **No command memorization**: Manage your router in plain English
 - **Safe by default**: All commands are reviewed before execution
 - **Easy web interface**: No need to SSH into your router
-- **Learn as you go**: See the actual commands g generates
+- **Learn as you go**: See the actual commands LuciCodex generates
 
 ### For Power Users
 - **Faster administration**: Natural language is quicker than looking up syntax
@@ -114,7 +114,7 @@ opkg install luci-app-lucicodex
 lucicodex -version
 ```
 
-You should see: `LuCICodex version 0.3.0`
+You should see: `LuciCodex version 0.3.0`
 
 ### Getting Your API Key
 
@@ -214,13 +214,16 @@ Or use interactive mode to confirm each command:
 
 ### Choosing Your AI Provider
 
-LuCICodex supports multiple AI providers. Here's how to choose:
+LuciCodex supports multiple AI providers. Here's how to choose:
 
-| Provider | Best For | Cost | Speed |
-|----------|----------|------|-------|
-| **Gemini** | Beginners, home users | Free tier available | Fast |
-| **OpenAI** | Advanced users, complex tasks | Pay per use | Very fast |
-| **Anthropic** | Privacy-conscious users | Pay per use | Fast |
+| Provider | Best For | Cost | Speed | API Key Required |
+|----------|----------|------|-------|------------------|
+| **Gemini** | Beginners, home users | Free tier available | Fast | GEMINI_API_KEY or lucicodex.@api[0].key |
+| **OpenAI** | Advanced users, complex tasks | Pay per use | Very fast | OPENAI_API_KEY or lucicodex.@api[0].openai_key |
+| **Anthropic** | Privacy-conscious users | Pay per use | Fast | ANTHROPIC_API_KEY or lucicodex.@api[0].anthropic_key |
+| **Gemini CLI** | Offline/local use | Free (local) | Varies | External gemini binary path |
+
+**Note:** Each provider requires its own specific API key. You only need to configure the key for the provider you're using.
 
 ### Configuring via Web Interface
 
@@ -395,7 +398,7 @@ LuCICodex has built-in rules about what commands are allowed:
 LuCICodex never uses shell expansion or pipes. Commands are executed directly with exact arguments, preventing injection attacks.
 
 ### 5. Execution Locking
-Only one LuCICodex command can run at a time, preventing conflicts and race conditions.
+Only one LuciCodex command can run at a time, preventing conflicts and race conditions. The CLI uses a lock file at `/var/lock/lucicodex.lock` (or `/tmp/lucicodex.lock` as fallback) to ensure exclusive execution.
 
 ### 6. Timeouts
 Every command has a timeout (default 30 seconds) to prevent hanging.
@@ -422,10 +425,12 @@ export GEMINI_API_KEY='YOUR-KEY-HERE'
 
 ### "execution in progress"
 
-**Solution:** Another LuciCodex command is running. Wait for it to finish, or remove the lock:
+**Solution:** Another LuciCodex command is running. Wait for it to finish, or remove the stale lock file:
 
 ```bash
 rm /var/lock/lucicodex.lock
+# or if using fallback location:
+rm /tmp/lucicodex.lock
 ```
 
 ### "command not found: lucicodex"
@@ -526,7 +531,19 @@ Available flags:
 - `-model=name`: Override model name
 - `-config=path`: Use custom config file
 - `-log-file=path`: Set log file path
+- `-facts=true`: Include environment facts in prompt (default: true)
+- `-join-args`: Join all arguments into single prompt (experimental)
 - `-version`: Show version
+
+**Note on prompt handling:** By default, LuciCodex uses only the first argument as the prompt. If you need to pass multi-word prompts without quotes, use the `-join-args` flag:
+
+```bash
+# Default behavior (recommended)
+lucicodex "show wifi status"
+
+# With -join-args flag (experimental)
+lucicodex -join-args show wifi status
+```
 
 ### Customizing the Policy
 

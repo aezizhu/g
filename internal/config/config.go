@@ -2,7 +2,6 @@ package config
 
 import (
     "encoding/json"
-    "errors"
     "fmt"
     "os"
     "os/exec"
@@ -19,6 +18,7 @@ type Config struct {
     Provider       string   `json:"provider"`
     DryRun         bool     `json:"dry_run"`
     AutoApprove    bool     `json:"auto_approve"`
+    ConfirmEach    bool     `json:"confirm_each"`
     TimeoutSeconds int      `json:"timeout_seconds"`
     MaxCommands    int      `json:"max_commands"`
     Allowlist      []string `json:"allowlist"`
@@ -47,7 +47,7 @@ func defaultConfig() Config {
             `^uci(\s|$)`,
             `^ubus(\s|$)`,
             `^fw4(\s|$)`,
-            `^opkg(\s|$)(update|install|remove|list|info)`,
+            `^opkg\s+(?:update|install|remove|list(?:-installed|-upgradable)?|info)(?:\s|$)`,
             `^logread(\s|$)`,
             `^dmesg(\s|$)`,
             `^ip(\s|$)`,
@@ -64,6 +64,7 @@ func defaultConfig() Config {
             `^dd(\s|$)`,
             `^:(){:|:&};:`,
         },
+        ConfirmEach: false,
         LogFile: "/tmp/lucicodex.log",
         ElevateCommand: "",
         OpenAIAPIKey: "",
@@ -124,7 +125,9 @@ func Load(path string) (Config, error) {
         cfg.DryRun = false
     }
     if confirmEach, _ := uciGet("lucicodex.@settings[0].confirm_each"); confirmEach == "1" {
-        cfg.AutoApprove = false
+        cfg.ConfirmEach = true
+    } else if confirmEach == "0" {
+        cfg.ConfirmEach = false
     }
     if timeout, _ := uciGet("lucicodex.@settings[0].timeout"); timeout != "" {
         if t, err := strconv.Atoi(timeout); err == nil && t > 0 {
@@ -167,10 +170,10 @@ func Load(path string) (Config, error) {
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_EXTERNAL_GEMINI")); v != "" {
         cfg.ExternalGeminiPath = v
     }
-
-    if cfg.APIKey == "" {
-        return cfg, errors.New("API key not configured")
+    if v := strings.TrimSpace(os.Getenv("LUCICODEX_CONFIRM_EACH")); v != "" {
+        cfg.ConfirmEach = v == "1" || strings.ToLower(v) == "true"
     }
+
     return cfg, nil
 }
 
