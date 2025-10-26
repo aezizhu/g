@@ -65,6 +65,7 @@ func (c *GeminiClient) GeneratePlan(ctx context.Context, prompt string) (plan.Pl
 
     reqBody := generateContentRequest{
         Contents: []content{{
+            Role:  "user",
             Parts: []part{{Text: prompt}},
         }},
         Config: &generationConfig{ResponseMimeType: "application/json"},

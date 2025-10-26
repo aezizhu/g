@@ -76,11 +76,9 @@ func TestLoadWithEnvVars(t *testing.T) {
 }
 
 func TestLoadWithOpenAIEnvVars(t *testing.T) {
-    os.Setenv("GEMINI_API_KEY", "gemini-key")
     os.Setenv("OPENAI_API_KEY", "openai-key-123")
     os.Setenv("LUCICODEX_PROVIDER", "openai")
 	defer func() {
-        os.Unsetenv("GEMINI_API_KEY")
         os.Unsetenv("OPENAI_API_KEY")
         os.Unsetenv("LUCICODEX_PROVIDER")
 	}()
@@ -99,11 +97,9 @@ func TestLoadWithOpenAIEnvVars(t *testing.T) {
 }
 
 func TestLoadWithAnthropicEnvVars(t *testing.T) {
-    os.Setenv("GEMINI_API_KEY", "gemini-key")
     os.Setenv("ANTHROPIC_API_KEY", "anthropic-key-123")
     os.Setenv("LUCICODEX_PROVIDER", "anthropic")
 	defer func() {
-        os.Unsetenv("GEMINI_API_KEY")
         os.Unsetenv("ANTHROPIC_API_KEY")
         os.Unsetenv("LUCICODEX_PROVIDER")
 	}()
