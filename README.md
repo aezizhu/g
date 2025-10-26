@@ -532,7 +532,18 @@ Available flags:
 - `-config=path`: Use custom config file
 - `-log-file=path`: Set log file path
 - `-facts=true`: Include environment facts in prompt (default: true)
+- `-join-args`: Join all arguments into single prompt (experimental)
 - `-version`: Show version
+
+**Note on prompt handling:** By default, LuciCodex uses only the first argument as the prompt. If you need to pass multi-word prompts without quotes, use the `-join-args` flag:
+
+```bash
+# Default behavior (recommended)
+lucicodex "show wifi status"
+
+# With -join-args flag (experimental)
+lucicodex -join-args show wifi status
+```
 
 ### Customizing the Policy
 

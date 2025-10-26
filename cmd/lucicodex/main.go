@@ -6,7 +6,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/aezizhu/LuciCodex/internal/config"
@@ -23,22 +25,25 @@ import (
 
 const version = "0.3.0"
 
-func acquireLock() (*os.File, error) {
+func acquireLock() (*os.File, string, error) {
 	lockPaths := []string{"/var/lock/lucicodex.lock", "/tmp/lucicodex.lock"}
 	var lastErr error
 	
-	for _, lockPath := range lockPaths {
+	for i, lockPath := range lockPaths {
 		f, err := os.OpenFile(lockPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
 		if err == nil {
-			return f, nil
+			if i > 0 {
+				fmt.Fprintf(os.Stderr, "Note: falling back to %s\n", lockPath)
+			}
+			return f, lockPath, nil
 		}
 		lastErr = err
 		if os.IsExist(err) {
-			return nil, fmt.Errorf("execution in progress (lock file exists: %s)", lockPath)
+			return nil, "", fmt.Errorf("execution in progress (lock file exists: %s)", lockPath)
 		}
 	}
 	
-	return nil, fmt.Errorf("failed to acquire lock: %w", lastErr)
+	return nil, "", fmt.Errorf("failed to acquire lock: %w", lastErr)
 }
 
 func releaseLock(f *os.File) {
@@ -65,6 +70,7 @@ func main() {
 		facts       = flag.Bool("facts", true, "include environment facts in prompt")
 		interactive = flag.Bool("interactive", false, "start interactive REPL mode")
 		setup       = flag.Bool("setup", false, "run setup wizard")
+		joinArgs    = flag.Bool("join-args", false, "join all arguments into single prompt (experimental)")
 	)
 
 	flag.Parse()
@@ -73,13 +79,6 @@ func main() {
 		fmt.Printf("LuciCodex version %s\n", version)
 		os.Exit(0)
 	}
-
-	lockFile, err := acquireLock()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
-	}
-	defer releaseLock(lockFile)
 
 	cfg, err := config.Load(*configPath)
 	if err != nil {
@@ -139,7 +138,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	prompt := strings.Join(args, " ")
+	var prompt string
+	if *joinArgs {
+		prompt = strings.Join(args, " ")
+	} else {
+		prompt = args[0]
+	}
 	ctx := context.Background()
 
 	llmProvider := llm.NewProvider(cfg)
@@ -214,6 +218,23 @@ func main() {
 			os.Exit(0)
 		}
 	}
+
+	lockFile, lockPath, err := acquireLock()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+	defer releaseLock(lockFile)
+	
+	fmt.Fprintf(os.Stderr, "Acquired execution lock: %s\n", lockPath)
+	
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-sigc
+		releaseLock(lockFile)
+		os.Exit(1)
+	}()
 
 	var results executor.Results
 	if *confirmEach {

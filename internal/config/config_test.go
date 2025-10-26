@@ -212,12 +212,12 @@ func TestLoadEnvOverridesFile(t *testing.T) {
 }
 
 func TestLoadMissingAPIKey(t *testing.T) {
-	_, err := Load("")
-	if err == nil {
-		t.Error("expected error when API key is missing")
+	cfg, err := Load("")
+	if err != nil {
+		t.Errorf("Load should not fail without API key (lazy validation): %v", err)
 	}
-	if err.Error() != "API key not configured" {
-		t.Errorf("expected 'API key not configured' error, got %q", err.Error())
+	if cfg.APIKey != "" {
+		t.Errorf("expected empty API key, got %q", cfg.APIKey)
 	}
 }
 

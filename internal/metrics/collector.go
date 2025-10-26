@@ -148,12 +148,11 @@ func (c *Collector) addRecentRequest(req RequestMetric) {
     }
 }
 
-func (c *Collector) GetMetrics() *Metrics {
+func (c *Collector) snapshot() *Metrics {
     c.metrics.mu.RLock()
     defer c.metrics.mu.RUnlock()
     
-    // Create a copy to avoid race conditions (don't copy the mutex)
-    out := Metrics{
+    out := &Metrics{
         TotalRequests:   c.metrics.TotalRequests,
         TotalCommands:   c.metrics.TotalCommands,
         SuccessfulRuns:  c.metrics.SuccessfulRuns,
@@ -165,9 +164,9 @@ func (c *Collector) GetMetrics() *Metrics {
         maxRecent:       c.metrics.maxRecent,
     }
     
-    out.ProviderUsage = make(map[string]int64)
-    out.CommandPatterns = make(map[string]int64)
-    out.ErrorTypes = make(map[string]int64)
+    out.ProviderUsage = make(map[string]int64, len(c.metrics.ProviderUsage))
+    out.CommandPatterns = make(map[string]int64, len(c.metrics.CommandPatterns))
+    out.ErrorTypes = make(map[string]int64, len(c.metrics.ErrorTypes))
     
     for k, v := range c.metrics.ProviderUsage {
         out.ProviderUsage[k] = v
@@ -181,14 +180,16 @@ func (c *Collector) GetMetrics() *Metrics {
     
     out.RecentRequests = append([]RequestMetric(nil), c.metrics.RecentRequests...)
     
-    return &out
+    return out
+}
+
+func (c *Collector) GetMetrics() *Metrics {
+    return c.snapshot()
 }
 
 func (c *Collector) Save() error {
-    c.metrics.mu.RLock()
-    data, err := json.MarshalIndent(c.metrics, "", "  ")
-    c.metrics.mu.RUnlock()
-    
+    m := c.snapshot()
+    data, err := json.MarshalIndent(m, "", "  ")
     if err != nil {
         return err
     }

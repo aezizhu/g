@@ -2,7 +2,6 @@ package config
 
 import (
     "encoding/json"
-    "errors"
     "fmt"
     "os"
     "os/exec"
@@ -175,25 +174,6 @@ func Load(path string) (Config, error) {
         cfg.ConfirmEach = v == "1" || strings.ToLower(v) == "true"
     }
 
-    provider := strings.ToLower(strings.TrimSpace(cfg.Provider))
-    switch provider {
-    case "openai":
-        if cfg.OpenAIAPIKey == "" {
-            return cfg, errors.New("OpenAI API key not configured")
-        }
-    case "anthropic":
-        if cfg.AnthropicAPIKey == "" {
-            return cfg, errors.New("Anthropic API key not configured")
-        }
-    case "gemini-cli":
-        if !fileExists(cfg.ExternalGeminiPath) {
-            return cfg, fmt.Errorf("Gemini CLI not found at %s", cfg.ExternalGeminiPath)
-        }
-    default: // gemini
-        if cfg.APIKey == "" {
-            return cfg, errors.New("API key not configured")
-        }
-    }
     return cfg, nil
 }
 
