@@ -36,9 +36,8 @@ jobs:
           cp dist/lucicodex_*_aarch64.ipk release/lucicodex-arm64.ipk
           cp dist/lucicodex_*_mipsel_24kc.ipk release/lucicodex-mipsle.ipk
           cp dist/luci-app-lucicodex_*_all.ipk release/luci-app-lucicodex.ipk
-          # Keep original versioned files too
-          cp dist/*.ipk release/
-          cp dist/SHA256SUMS release/
+          # Generate SHA256SUMS for simplified names only
+          (cd release && sha256sum *.ipk > SHA256SUMS)
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
