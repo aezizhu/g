@@ -25,6 +25,9 @@ type Config struct {
     Denylist       []string `json:"denylist"`
     LogFile        string   `json:"log_file"`
     ElevateCommand string   `json:"elevate_command"`
+    // Retry configuration
+    MaxRetries     int      `json:"max_retries"`
+    AutoRetry      bool     `json:"auto_retry"`
     // Optional external providers/API keys
     OpenAIAPIKey   string   `json:"openai_api_key"`
     AnthropicAPIKey string  `json:"anthropic_api_key"`
@@ -43,6 +46,8 @@ func defaultConfig() Config {
         AutoApprove:    false,
         TimeoutSeconds: 30,
         MaxCommands:    10,
+        MaxRetries:     2,
+        AutoRetry:      true,
         Allowlist: []string{
             `^uci(\s|$)`,
             `^ubus(\s|$)`,
@@ -57,6 +62,13 @@ func defaultConfig() Config {
             `^grep(\s|$)`,
             `^awk(\s|$)`,
             `^sed(\s|$)`,
+            `^wifi(\s|$)`,
+            `^ping(\s|$)`,
+            `^nslookup(\s|$)`,
+            `^ifconfig(\s|$)`,
+            `^route(\s|$)`,
+            `^iptables(\s|$)`,
+            `^/etc/init\.d/`,
         },
         Denylist: []string{
             `^rm\s+-rf\s+/`,
@@ -172,6 +184,14 @@ func Load(path string) (Config, error) {
     }
     if v := strings.TrimSpace(os.Getenv("LUCICODEX_CONFIRM_EACH")); v != "" {
         cfg.ConfirmEach = v == "1" || strings.ToLower(v) == "true"
+    }
+    if v := strings.TrimSpace(os.Getenv("LUCICODEX_AUTO_RETRY")); v != "" {
+        cfg.AutoRetry = v == "1" || strings.ToLower(v) == "true"
+    }
+    if v := strings.TrimSpace(os.Getenv("LUCICODEX_MAX_RETRIES")); v != "" {
+        if r, err := strconv.Atoi(v); err == nil && r >= 0 {
+            cfg.MaxRetries = r
+        }
     }
 
     return cfg, nil

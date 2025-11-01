@@ -347,8 +347,12 @@ lucicodex "show me memory usage"
 # Check disk space
 lucicodex "show me disk space usage"
 
-# View system logs
-lucicodex "show me the last 20 lines of system log"
+# View system logs (with automatic error recovery)
+lucicodex -dry-run=false -approve "show me the last 20 lines of system log"
+# If the command fails, LuciCodex will automatically:
+# 1. Detect the error (e.g., logread not found)
+# 2. Generate a fix (e.g., use dmesg or /var/log/messages)
+# 3. Retry with the corrected command
 ```
 
 ### Diagnostics
@@ -405,6 +409,15 @@ Every command has a timeout (default 30 seconds) to prevent hanging.
 
 ### 7. Audit Logging
 All commands and their results are logged to `/tmp/lucicodex.log` for review.
+
+### 8. Automatic Error Recovery
+When commands fail, LuciCodex can automatically:
+- Detect and analyze the error
+- Generate corrective commands
+- Retry with the fix
+- Learn from common OpenWrt patterns
+
+This self-healing capability means you don't need to know the exact command syntax - LuciCodex will figure it out for you.
 
 ---
 
@@ -524,6 +537,8 @@ Available flags:
 - `-approve`: Auto-approve plan without confirmation
 - `-dry-run`: Only show plan, don't execute (default: true)
 - `-confirm-each`: Confirm each command individually
+- `-auto-retry`: Automatically retry failed commands with AI-generated fixes (default: true)
+- `-max-retries=N`: Maximum retry attempts for failed commands (default: 2, -1 = use config)
 - `-json`: Output in JSON format
 - `-interactive`: Start interactive REPL mode
 - `-timeout=30`: Set command timeout in seconds

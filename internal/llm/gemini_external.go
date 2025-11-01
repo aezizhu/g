@@ -42,4 +42,9 @@ func (c *ExternalGeminiClient) GeneratePlan(ctx context.Context, prompt string) 
     return zero, errors.New("external gemini did not return a valid plan")
 }
 
+func (c *ExternalGeminiClient) GenerateErrorFix(ctx context.Context, originalCommand string, errorOutput string, attempt int) (plan.Plan, error) {
+    prompt := "You are a router command error fixer for OpenWrt systems.\n\nThe following command failed:\nCommand: " + originalCommand + "\nError output: " + errorOutput + "\n\nAnalyze the error and provide a corrected plan to fix the issue. Output strict JSON with commands array."
+    return c.GeneratePlan(ctx, prompt)
+}
+
 

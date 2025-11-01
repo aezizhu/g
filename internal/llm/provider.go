@@ -10,6 +10,7 @@ import (
 // Provider is the interface implemented by LLM clients that can produce plans.
 type Provider interface {
     GeneratePlan(ctx context.Context, prompt string) (plan.Plan, error)
+    GenerateErrorFix(ctx context.Context, originalCommand string, errorOutput string, attempt int) (plan.Plan, error)
 }
 
 // NewProvider returns a Provider based on configuration.
