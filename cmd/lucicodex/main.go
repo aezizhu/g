@@ -64,6 +64,8 @@ func main() {
 		confirmEach = flag.Bool("confirm-each", false, "confirm each command before execution")
 		timeout     = flag.Int("timeout", 0, "per-command timeout in seconds")
 		maxCommands = flag.Int("max-commands", 0, "maximum number of commands to execute")
+		maxRetries  = flag.Int("max-retries", -1, "maximum retry attempts for failed commands (-1 = use config)")
+		autoRetry   = flag.Bool("auto-retry", true, "automatically retry failed commands with AI-generated fixes")
 		logFile     = flag.String("log-file", "", "log file path")
 		showVersion = flag.Bool("version", false, "print version and exit")
 		jsonOutput  = flag.Bool("json", false, "emit JSON output for plan and results")
@@ -102,11 +104,15 @@ func main() {
 	if *maxCommands > 0 {
 		cfg.MaxCommands = *maxCommands
 	}
+	if *maxRetries >= 0 {
+		cfg.MaxRetries = *maxRetries
+	}
 	if *logFile != "" {
 		cfg.LogFile = *logFile
 	}
 	cfg.DryRun = *dryRun
 	cfg.AutoApprove = *approve
+	cfg.AutoRetry = *autoRetry
 	
 	if !*confirmEach && cfg.ConfirmEach {
 		*confirmEach = true
@@ -254,6 +260,98 @@ func main() {
 		}
 	} else {
 		results = execEngine.RunPlan(ctx, p)
+	}
+
+	// Retry logic for failed commands
+	if cfg.AutoRetry && results.Failed > 0 && cfg.MaxRetries > 0 {
+		for retryAttempt := 1; retryAttempt <= cfg.MaxRetries; retryAttempt++ {
+			// Find first failed command
+			var failedResult *executor.Result
+			for i := range results.Items {
+				if results.Items[i].Err != nil {
+					failedResult = &results.Items[i]
+					break
+				}
+			}
+			
+			if failedResult == nil {
+				break // No more failures
+			}
+
+			if !*jsonOutput {
+				fmt.Fprintf(os.Stderr, "\n??  Command failed: %s\n", executor.FormatCommand(failedResult.Command))
+				fmt.Fprintf(os.Stderr, "Error: %v\n", failedResult.Err)
+				fmt.Fprintf(os.Stderr, "Output: %s\n", failedResult.Output)
+				fmt.Fprintf(os.Stderr, "?? Attempting automatic fix (attempt %d/%d)...\n", retryAttempt, cfg.MaxRetries)
+			}
+
+			// Generate fix plan
+			fixCtx, fixCancel := context.WithTimeout(ctx, 30*time.Second)
+			fixPlan, err := llmProvider.GenerateErrorFix(fixCtx, 
+				executor.FormatCommand(failedResult.Command), 
+				failedResult.Output, 
+				retryAttempt)
+			fixCancel()
+
+			if err != nil {
+				if !*jsonOutput {
+					fmt.Fprintf(os.Stderr, "Failed to generate fix: %v\n", err)
+				}
+				break
+			}
+
+			if len(fixPlan.Commands) == 0 {
+				if !*jsonOutput {
+					fmt.Fprintf(os.Stderr, "No fix commands generated\n")
+				}
+				break
+			}
+
+			// Validate fix plan
+			if err := policyEngine.ValidatePlan(fixPlan); err != nil {
+				if !*jsonOutput {
+					fmt.Fprintf(os.Stderr, "Fix plan rejected by policy: %v\n", err)
+				}
+				break
+			}
+
+			if !*jsonOutput {
+				fmt.Fprintf(os.Stderr, "\n?? Fix plan: %s\n", fixPlan.Summary)
+				for _, cmd := range fixPlan.Commands {
+					fmt.Fprintf(os.Stderr, "  ? %s\n", executor.FormatCommand(cmd.Command))
+				}
+			}
+
+			// Execute fix
+			fixResults := execEngine.RunPlan(ctx, fixPlan)
+			
+			// Mark original failure as retried by removing the error if fix succeeded
+			if fixResults.Failed == 0 {
+				if !*jsonOutput {
+					fmt.Fprintf(os.Stderr, "? Fix successful!\n")
+				}
+				failedResult.Err = nil
+				results.Failed--
+				
+				// Append fix results to overall results
+				for _, fr := range fixResults.Items {
+					results.Items = append(results.Items, fr)
+				}
+				break
+			} else {
+				if !*jsonOutput {
+					fmt.Fprintf(os.Stderr, "? Fix attempt failed\n")
+				}
+				// Update the failed result with the new error
+				for _, fr := range fixResults.Items {
+					if fr.Err != nil {
+						failedResult.Output = fr.Output
+						failedResult.Err = fr.Err
+						break
+					}
+				}
+			}
+		}
 	}
 
 	if *jsonOutput {
