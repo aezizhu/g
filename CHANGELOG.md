@@ -7,14 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- **Release assets simplified**: Only user-friendly filenames are now included in releases (e.g., `lucicodex-mips.ipk` instead of `lucicodex_0.3.0_mips_24kc.ipk`)
-- Versioned IPK filenames removed to reduce release bloat and confusion
-- SHA256SUMS now references only the simplified filenames
+### Deprecated
+- **Versioned IPK filenames**: Files like `lucicodex_0.3.0_mips_24kc.ipk` are deprecated in favor of simplified names like `lucicodex-mips.ipk`
+- Versioned files will continue to be available through v0.3.x releases but **will be removed in v0.4.0**
+- Users should migrate to simplified filenames as documented in README
 
 ### Migration Notes
-- If you were downloading versioned IPK files programmatically, update your scripts to use the simplified names documented in README
-- Version information is available via the GitHub release tag and `lucicodex -version` command after installation
+- **Action Required (by v0.4.0)**: Update any scripts or automation to use simplified filenames:
+  - OLD: `lucicodex_0.3.0_mips_24kc.ipk` ? NEW: `lucicodex-mips.ipk`
+  - OLD: `lucicodex_0.3.0_x86_64.ipk` ? NEW: `lucicodex-amd64.ipk`
+  - See README for complete list of simplified names
+- Version information is available via GitHub release tags and `lucicodex -version` after installation
 
 ## [0.3.0] - 2025-11-01
 
