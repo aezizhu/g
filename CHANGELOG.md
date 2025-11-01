@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Release assets simplified**: Only user-friendly filenames are now included in releases (e.g., `lucicodex-mips.ipk` instead of `lucicodex_0.3.0_mips_24kc.ipk`)
+- Versioned IPK filenames removed to reduce release bloat and confusion
+- SHA256SUMS now references only the simplified filenames
+
+### Migration Notes
+- If you were downloading versioned IPK files programmatically, update your scripts to use the simplified names documented in README
+- Version information is available via the GitHub release tag and `lucicodex -version` command after installation
+
 ## [0.3.0] - 2025-11-01
 
 ### Changed
