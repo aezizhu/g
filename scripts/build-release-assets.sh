@@ -40,6 +40,8 @@ ipk_pack_lucicodex() {
   esac
   local work
   work=$(mktemp -d)
+  local outdir
+  outdir=$(readlink -f "$OUT")
   mkdir -p "$work/control" "$work/data/usr/bin"
   install -m0755 "$binpath" "$work/data/usr/bin/lucicodex"
   cat > "$work/control/control" <<EOF
@@ -52,13 +54,15 @@ Priority: optional
 Depends: libc
 Description: LuciCodex - Natural-language CLI for OpenWrt
 EOF
-  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/lucicodex_${VERSION}_${arch_ipk}.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
+  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$outdir/lucicodex_${VERSION}_${arch_ipk}.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
 }
 
 ipk_pack_luci() {
   local work
   work=$(mktemp -d)
+  local outdir
+  outdir=$(readlink -f "$OUT")
   mkdir -p "$work/control" "$work/data/usr/lib/lua/luci/controller" "$work/data/usr/lib/lua/luci/view/lucicodex"
   install -m0644 package/luci-app-lucicodex/luasrc/controller/lucicodex.lua "$work/data/usr/lib/lua/luci/controller/lucicodex.lua"
   install -m0644 package/luci-app-lucicodex/luasrc/view/lucicodex/overview.htm "$work/data/usr/lib/lua/luci/view/lucicodex/overview.htm"
@@ -72,7 +76,7 @@ Priority: optional
 Depends: luci-base, lucicodex
 Description: LuCI web UI for LuciCodex
 EOF
-  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$OUT/luci-app-lucicodex_${VERSION}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
+  (cd "$work"; echo 2.0 > debian-binary; tar -czf control.tar.gz -C control .; tar -czf data.tar.gz -C data .; ar -r "$outdir/luci-app-lucicodex_${VERSION}_all.ipk" debian-binary control.tar.gz data.tar.gz >/dev/null)
   rm -rf "$work"
 }
 

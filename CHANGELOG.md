@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - 2025-10-25
+## [0.3.0] - 2025-11-01
 
 ### Changed
 - Project renamed from "g" to "LuciCodex" (branding standardized)
@@ -14,6 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation updated to remove references to `g`
 - Environment variables standardized to `LUCICODEX_*`
 - LuCI routes: `admin/system/lucicodex`
+
+### Fixed
+- Release workflow now has proper `contents: write` permissions for creating releases
+- Build script uses absolute paths to prevent IPK creation failures
+- Added simplified IPK filenames (`lucicodex-mips.ipk`) alongside versioned ones for easier downloads
+
+### Added
+- GitHub Release v0.3.0 with downloadable IPK packages for all architectures
+- User-friendly download links: `lucicodex-{mips,arm,amd64,arm64,mipsle}.ipk`
+- SHA256SUMS file for package verification
 
 ### Migration Notes
 - Legacy `g` command and config are no longer supported; invoke `lucicodex` exclusively
@@ -61,4 +71,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Non-root execution by default with explicit elevation
 - Audit trail with structured logging
 
+[0.3.0]: https://github.com/aezizhu/LuciCodex/releases/tag/v0.3.0
+[0.2.0]: https://github.com/aezizhu/LuciCodex/releases/tag/v0.2.0
 [0.1.0]: https://github.com/aezizhu/LuciCodex/releases/tag/v0.1.0
