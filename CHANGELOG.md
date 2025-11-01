@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Deprecated
+- **Versioned IPK filenames**: Files like `lucicodex_0.3.0_mips_24kc.ipk` are deprecated in favor of simplified names like `lucicodex-mips.ipk`
+- Versioned files will continue to be available through v0.3.x releases but **will be removed in v0.4.0**
+- Users should migrate to simplified filenames as documented in README
+
+### Migration Notes
+- **Action Required (by v0.4.0)**: Update any scripts or automation to use simplified filenames:
+  - OLD: `lucicodex_0.3.0_mips_24kc.ipk` ? NEW: `lucicodex-mips.ipk`
+  - OLD: `lucicodex_0.3.0_x86_64.ipk` ? NEW: `lucicodex-amd64.ipk`
+  - See README for complete list of simplified names
+- Version information is available via GitHub release tags and `lucicodex -version` after installation
+
 ## [0.3.0] - 2025-11-01
 
 ### Changed

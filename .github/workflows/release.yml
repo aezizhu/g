@@ -29,16 +29,19 @@ jobs:
       - name: Create simplified release files
         run: |
           mkdir -p release
-          # Copy and rename to user-friendly names matching README
+          # Copy and rename to user-friendly names matching README (primary)
           cp dist/lucicodex_*_mips_24kc.ipk release/lucicodex-mips.ipk
           cp dist/lucicodex_*_arm_cortex-a7.ipk release/lucicodex-arm.ipk
           cp dist/lucicodex_*_x86_64.ipk release/lucicodex-amd64.ipk
           cp dist/lucicodex_*_aarch64.ipk release/lucicodex-arm64.ipk
           cp dist/lucicodex_*_mipsel_24kc.ipk release/lucicodex-mipsle.ipk
           cp dist/luci-app-lucicodex_*_all.ipk release/luci-app-lucicodex.ipk
-          # Keep original versioned files too
+          # DEPRECATED: Keep versioned files for backward compatibility (will be removed in v0.4.0)
           cp dist/*.ipk release/
+          # Generate SHA256SUMS for all files
           cp dist/SHA256SUMS release/
+          # Add deprecation notice
+          cp DEPRECATION_NOTICE.md release/
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
